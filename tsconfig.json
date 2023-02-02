@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "jsx": "react",
+    "module": "esnext",
+    "target": "esnext",
+    "allowJs": false,
+    "noUnusedLocals": false,
+    "strictNullChecks": true,
+    "preserveConstEnums": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "baseUrl": ".",
+    "lib": ["ESNext"],
+    "paths": {
+      "@": ["src"]
+    },
+  },
+  "exclude": ["examples/**/*"]
+}
