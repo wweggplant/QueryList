@@ -43,12 +43,40 @@ const App = defineComponent({
 - `pagingEnable`: boolean类型，是否启用分页功能。
 - `pagination`: PaginationConfig类型，用于配置分页组件的页大小。
 - `slots`: Toolbar, Pagination, default。Toolbar用于自定义查询工具条，Pagination用于自定义分页组件，default用于放置查询列表。
+
+### QueryListAction
+
+```typescript
+export interface QueryListAction<T> {
+  // ...
+  API: {
+    doQuery: (resetPagin?: boolean) => Promise<void> // 表单查询
+  }
+  queryTable: any
+  queryForm: any
+  queryResult: any
+  selectedRecords: { // 选中的记录
+    list: Ref<T[]>
+    update: (list: T[]) => void
+  }
+  paginationContext: { // 分页上下文
+    currentPage: Ref<number>
+    total: Ref<number>
+    pageSize: Ref<number>
+    totalPage: Ref<number>
+    changePage: (p: number) => void
+    changePageSize: (size: number) => void
+    changeTotal: (t: number) => void
+  }
+}
+
+```
 ### useQueryList
 - 返回值: `QueryListAction` | undefined类型，提供了API接口，可以调用doQuery方法手动执行查询，重置分页，并修改查询表单的值。
 ### QueryListForm
 - `buttonGroup`: { submitText?: string, resetText?: string, align?: string }类型，用于配置查询表单的提交和重置按钮的文案，以及对齐方式。
-- WithTableAction
-- WrappedComponent: Component类型，包装一个组件，使其能够在Table组件中使用。
+- `QueryActionBtn`: 操作类按钮，可以在获取QueryList上下文的情况下，调用QueryList的API。
+- `WrappedComponent`: Component类型，包装一个组件，使其能够在Table组件中使用。
 ## 例子
 
 ```vue
@@ -73,9 +101,10 @@ const QueryListWrapper = createQueryList({
       total,
     }
   },
-  batchDel(querylist, ...args) {
+  batchDel(querylist, selectedRecords, ...args) {
     const { API } = querylist
     console.log('执行删除操作')
+    console.log(selectedRecords, '选中的记录')
     console.log(args)
     // 执行查询
     API.doQuery()

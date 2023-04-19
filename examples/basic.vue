@@ -20,8 +20,9 @@ const QueryListWrapper = createQueryList({
     }
   },
   batchDel(querylist, ...args) {
-    const { API } = querylist
+    const { API, selectedRecords } = querylist
     console.log('执行删除操作')
+    console.log(selectedRecords.value, 'selectedRecords')
     console.log(args)
     // 执行查询
     API.doQuery()

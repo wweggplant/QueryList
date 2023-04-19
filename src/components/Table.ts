@@ -31,7 +31,7 @@ import { ArrayBase, Space } from '@formily/element'
 import { stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
 import './style.scss'
-import { useQueryList, WithTableAction } from './QueryList'
+import { useQueryList, useSelectedRecords, WithTableAction } from './QueryList'
 
 const RecursionField = _RecursionField as unknown as Component
 
@@ -441,6 +441,7 @@ const ArrayTableInner = observer(
       const defaultRowKey = (record: any) => {
         return getKey(record)
       }
+      const { update: updateSelectedRecords } = useSelectedRecords() ?? {}
       return () => {
         const field = fieldRef.value
         const dataSource = Array.isArray(field.value) ? field.value.slice() : []
@@ -527,7 +528,13 @@ const ArrayTableInner = observer(
                             ...attrs,
                             data: dataSource
                           },
-                          on: listeners
+                          on: {
+                            ...listeners,
+                            'selection-change' (list) {
+                              updateSelectedRecords(list)
+                              listeners?.['selection-change']?.(list)
+                            }
+                          }
                         },
                         {
                           ...slots,

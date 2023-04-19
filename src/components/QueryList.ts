@@ -1,10 +1,10 @@
-import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive } from 'vue-demi'
+import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref } from 'vue-demi'
 import { useQueryClient, useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
 import { h, useField, useFieldSchema, Fragment, useForm } from '@formily/vue'
 import type { Field } from '@formily/core'
 import { Space, Submit, Reset, FormButtonGroup, type SpaceProps } from '@formily/element'
 import Table, { PaginationSymbol, type PaginationAction } from './Table'
-import { QueryBaseSymbol, UniqueQueryKey } from '../shared/const'
+import { QueryBaseSymbol, SelectedRecordsSymbol, UniqueQueryKey, stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
 import './style.scss'
 
@@ -23,7 +23,7 @@ interface QueryListProps {
   }
   queryFn: (query: { form: IQueryParams, currentPagin: IQueryFnPagination }, context: QueryFunctionContext) => Promise<any>
 }
-interface QueryListAction {
+export interface QueryListAction<T> {
   field: any
   schema: any
   rootProps: any
@@ -34,9 +34,30 @@ interface QueryListAction {
   queryTable: any
   queryForm: any
   queryResult: any
+  selectedRecords: {
+    list: Ref<T[]>
+    update: (list: T[]) => void
+  }
+  paginationContext: {
+    currentPage: Ref<number>
+    total: Ref<number>
+    pageSize: Ref<number>
+    totalPage: Ref<number>
+    changePage: (p: number) => void
+    changePageSize: (size: number) => void
+    changeTotal: (t: number) => void
+  }
 }
-export const useQueryList = () => inject<QueryListAction>(QueryBaseSymbol)
-
+export const useQueryList = () => inject(QueryBaseSymbol)
+export const useSelectedRecords = <T>() => {
+  return inject<{
+    update: (record: T) => void
+    list: Ref<T[]>
+  }>(SelectedRecordsSymbol, {
+        update: () => {},
+        list: ref([])
+      })
+}
 interface IListPageResult { list: Array<{ list: unknown[] }>, currentPage: number, total: number }
 type IListResult = unknown[]
 const QueryListInner = defineComponent<QueryListProps>({
@@ -82,6 +103,13 @@ const QueryListInner = defineComponent<QueryListProps>({
       })
     })
     provide(PaginationSymbol, paginationContext)
+    const selectedRecords = ref([]) as Ref<any[]>
+    provide(SelectedRecordsSymbol, {
+      list: selectedRecords,
+      update: (list) => {
+        selectedRecords.value = list
+      }
+    })
     const queryKey = [UniqueQueryKey, readonly(page)]
     const queryOptions = { queryKey, queryFn, onSuccess, structuralSharing: false, refetchOnWindowFocus: false, keepPreviousData: true, ...props.queryOptions }
     const queryResult = useQuery(queryOptions)
@@ -105,6 +133,7 @@ const QueryListInner = defineComponent<QueryListProps>({
       queryTable,
       queryForm,
       queryResult,
+      selectedRecords,
       paginationContext
     })
     return () => {
@@ -129,7 +158,7 @@ const Toolbar = defineComponent<ToolbarProps>({
       const { justify } = props
       return h(
         Space,
-        { props: { ...props, align: props.align ?? 'end' }, style: { display: 'flex', 'justify-content': justify } },
+        { class: `${stylePrefix}-query-tool-bar`, props: { ...props, align: props.align ?? 'end' }, style: { display: 'flex', 'justify-content': justify } },
         slots
       )
     }
@@ -191,7 +220,7 @@ export const Form = defineComponent<IQueryListFormProps>({
           ]
         })
       }
-      return h('div', { class: 'query-list-form', ...attrs }, { default: () => [slots?.default?.(), renderFormButtonGroup()] })
+      return h('div', { class: `${stylePrefix}-query-list-form`, ...attrs }, { default: () => [slots?.default?.(), renderFormButtonGroup()] })
     }
   }
 })

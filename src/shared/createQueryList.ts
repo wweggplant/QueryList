@@ -1,8 +1,8 @@
 import type { Component } from 'vue'
-import { defineComponent, h } from 'vue-demi'
+import { defineComponent } from 'vue-demi'
 import QueryList from '../components/QueryList'
 import { createForm, type IFormProps } from '@formily/core'
-import { FormProvider, createSchemaField } from '@formily/vue'
+import { FormProvider, createSchemaField, h } from '@formily/vue'
 import {
   ArrayCards,
   ArrayCollapse,
@@ -104,7 +104,7 @@ const createQueryList: IcreateQueryListContextRuturn = (scope, components, formP
     setup (props) {
       const form = createForm(formProps)
       return () => {
-        return h(FormProvider, { props: { form } }, [h(SchemaField, { props: { schema: props.schema } })])
+        return h(FormProvider, { props: { form } }, { default: () => [h(SchemaField, { props: { schema: props.schema } }, {})] })
       }
     }
 

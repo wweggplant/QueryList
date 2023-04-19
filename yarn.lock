@@ -1903,18 +1903,18 @@
   dependencies:
     remove-accents "0.4.2"
 
-"@tanstack/query-core@4.26.1":
-  version "4.26.1"
-  resolved "http://10.130.130.169:4873/@tanstack%2fquery-core/-/query-core-4.26.1.tgz#7a441086c4d3d79e1d156c0a355bd3567213626e"
-  integrity sha512-Zrx2pVQUP4ndnsu6+K/m8zerXSVY8QM+YSbxA1/jbBY21GeCd5oKfYl92oXPK0hPEUtoNuunIdiq0ZMqLos+Zg==
+"@tanstack/query-core@4.29.1":
+  version "4.29.1"
+  resolved "http://10.130.130.169:4873/@tanstack%2fquery-core/-/query-core-4.29.1.tgz#62a4bc120b85e6bb3c6c0aca96346e643e232248"
+  integrity sha512-vkPewLEG8ua0efo3SsVT0BcBtkq5RZX8oPhDAyKL+k/rdOYSQTEocfGEXSaBwIwsXeOGBUpfKqI+UmHvNqdWXg==
 
-"@tanstack/vue-query@^4.26.1":
-  version "4.26.1"
-  resolved "http://10.130.130.169:4873/@tanstack%2fvue-query/-/vue-query-4.26.1.tgz#e793eb7895d5675fcbe0983fd91b3ac66be2677e"
-  integrity sha512-o42vdAkcD/1DWhf9j+AC0J8N9BCJSGBJeZpkOjx4aOzUdeeWKwoPfENGYID1wmQ4AVDOr9INNku9mHPRI0e4IQ==
+"@tanstack/vue-query@^4.29.1":
+  version "4.29.1"
+  resolved "http://10.130.130.169:4873/@tanstack%2fvue-query/-/vue-query-4.29.1.tgz#5b74f853e9d0513d0a1e4887db7e49e3051613a6"
+  integrity sha512-2/F12lOHQw3YQbHVKGZUTEuwxrws6UR3VEXNX/Obw2NLupmCYR7+dcBwwHQ75zUQngxLFQwHCJKX7Ne1Wyk/HA==
   dependencies:
     "@tanstack/match-sorter-utils" "^8.1.1"
-    "@tanstack/query-core" "4.26.1"
+    "@tanstack/query-core" "4.29.1"
     "@vue/devtools-api" "^6.4.2"
     vue-demi "^0.13.11"
 
@@ -2192,6 +2192,13 @@
   version "0.12.0"
   resolved "http://10.130.130.169:4873/@types%2fretry/-/retry-0.12.0.tgz#2b35eccfcee7d38cd72ad99232fbd58bffb3c84d"
   integrity sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==
+
+"@types/rollup-plugin-postcss@^3.1.4":
+  version "3.1.4"
+  resolved "http://10.130.130.169:4873/@types%2frollup-plugin-postcss/-/rollup-plugin-postcss-3.1.4.tgz#064054efb779a4ab6f1ea5d67f46f26acfc13a51"
+  integrity sha512-r1udsfjOlDiErJAvpsU12LNqwYfaMtom4wTKkm8lAu/cZBYbEN7Mcfyucpicl+R3GoBkgNXE+39bEnMjXxGRdA==
+  dependencies:
+    rollup-plugin-postcss "*"
 
 "@types/rollup@^0.54.0":
   version "0.54.0"
@@ -9811,7 +9818,7 @@ rollup-plugin-livereload@^2.0.0:
   dependencies:
     livereload "^0.9.1"
 
-rollup-plugin-postcss@^4.0.2:
+rollup-plugin-postcss@*, rollup-plugin-postcss@^4.0.2:
   version "4.0.2"
   resolved "http://10.130.130.169:4873/rollup-plugin-postcss/-/rollup-plugin-postcss-4.0.2.tgz#15e9462f39475059b368ce0e49c800fa4b1f7050"
   integrity sha512-05EaY6zvZdmvPUDi3uCcAQoESDcYnv8ogJJQRp6V5kZ6J6P7uAVJlrTZcaaA20wTH527YTnKfkAoPxWI/jPp4w==

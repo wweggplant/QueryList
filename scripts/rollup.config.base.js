@@ -39,7 +39,7 @@ export default {
       banner
     }
   ],
-  external: ['vue', '@vue/composition-api', '@formily/reactive-vue', '@formily/shared', '@formily/reactive', '@formily/core', '@formily/json-schema', '@formily/vue', '@formily/element', 'element-ui'],
+  external: ['vue', '@vue/composition-api', '@formily/reactive-vue', '@formily/shared', '@formily/reactive', '@formily/core', '@formily/json-schema', '@formily/vue', '@formily/element', 'element-ui', '@tanstack/vue-query', 'vue-demi'],
   plugins: [
     clear({
       targets: ['dist']
@@ -53,9 +53,7 @@ export default {
       preventAssignment: true
     }),
     nodeResolve(),
-    commonjs({
-      include: 'node_modules/**'
-    }),
+    commonjs(),
     // eslint(),
     babel({ babelHelpers: 'bundled' }),
     postcss({
