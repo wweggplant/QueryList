@@ -1,17 +1,55 @@
-# QueryList 组件
+# QueryList
 
-QueryList 是一个基于 JSON Schema 的处理通用查询场景的组件。以下是它的示例代码：
+一个基于 `@tanstack/vue-query` 和 `@formily` 的JSON Scheme驱动的处理查询场景的组件
 
 ## 安装
 
-```bash
 
-npm install -save @he-fe/query-list
+```sh
+npm install @formily/element @tanstack/vue-query @formily/vue element-ui @vue/composition-api @he-fe/query-list
 # or
-yarn add @he-fe/query-list
+yarn add @formily/element @tanstack/vue-query @formily/vue element-ui @vue/composition-api @he-fe/query-list 
 ```
 
-## 示例代码
+## 使用
+```tsx
+Copy code
+import { defineComponent } from 'vue'
+import { QueryList } from '@formily/query-list'
+
+const App = defineComponent({
+  components: { QueryList },
+  setup() {
+    return () => {
+      return (
+        <QueryList
+          queryOptions={{ queryFn: () => Promise.resolve([]) }}
+          pagingEnable
+          pagination={{ pageSize: 10 }}
+          queryFn={() => Promise.resolve([])}
+        >
+          <div slot="toolbar">查询工具条</div>
+          <div slot="pagination">分页组件</div>
+        </QueryList>
+      )
+    }
+  }
+})
+```
+## API
+### QueryList
+- `queryOptions`: UseQueryOptions类型，用于控制查询的行为，具体使用参考 @tanstack/vue-query。
+- `queryFn`: Promise<any>类型，用于处理查询请求。函数的第一个参数是查询表单的值，第二个参数是@tanstack/vue-query的QueryFunctionContext类型。
+- `pagingEnable`: boolean类型，是否启用分页功能。
+- `pagination`: PaginationConfig类型，用于配置分页组件的页大小。
+- `slots`: Toolbar, Pagination, default。Toolbar用于自定义查询工具条，Pagination用于自定义分页组件，default用于放置查询列表。
+### useQueryList
+- 返回值: `QueryListAction` | undefined类型，提供了API接口，可以调用doQuery方法手动执行查询，重置分页，并修改查询表单的值。
+### QueryListForm
+- `buttonGroup`: { submitText?: string, resetText?: string, align?: string }类型，用于配置查询表单的提交和重置按钮的文案，以及对齐方式。
+- WithTableAction
+- WrappedComponent: Component类型，包装一个组件，使其能够在Table组件中使用。
+## 例子
 
 ```vue
 <template>
@@ -20,9 +58,8 @@ yarn add @he-fe/query-list
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { createQueryList } from '@he-fe/query-list'
+import { createQueryList } from '../src/index'
 import schema from './schema.json'
-
 const QueryListWrapper = createQueryList({
   queryFn: async ({ form, currentPagin, }) => { 
     const response = await fetch(`/api/getQueryListData?name=${form?.name ?? ''}&type=${form?.type ?? ''}&page=${currentPagin.currentPage}`)
@@ -51,7 +88,6 @@ const QueryListWrapper = createQueryList({
     API.doQuery()
   }
 })
-
 export default defineComponent({
   components: {
     QueryListWrapper
@@ -63,7 +99,9 @@ export default defineComponent({
   }
 })
 </script>
+
 ```
+schema.json
 
 ```json
 {
