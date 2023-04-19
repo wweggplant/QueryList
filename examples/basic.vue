@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue-demi'
-import { createQueryList, QueryList} from '../src/index'
+import { createQueryList } from '../src/index'
 import schema from './schema.json'
 const QueryListWrapper = createQueryList({
   queryFn: async ({ form, currentPagin, }) => { 

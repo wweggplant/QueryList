@@ -1,6 +1,6 @@
 {
   "name": "@he-fe/query-list",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "queryList",
   "main": "dist/query-list.umd.js",
   "module": "dist/query-list.esm.js",
@@ -29,9 +29,8 @@
     "test:c": "jest --coverage",
     "prepublish": "npm run build",
     "pub": "npm publish --access=public",
-    "pub:x": "npm run x && npm publish --access=public",
-    "pub:y": "npm run y && npm publish --access=public",
-    "pub:z": "npm run z && npm publish --access=public"
+    "release": "standard-version",
+    "release:alpha": "npm run release -- --prerelease alpha"
   },
   "author": "wei279.wang",
   "license": "MIT",
@@ -76,6 +75,7 @@
     "@types/jest": "^29.2.3",
     "@types/prettier": "^2.7.1",
     "@types/rollup": "^0.54.0",
+    "@types/rollup-plugin-postcss": "^3.1.4",
     "@types/vue": "^2.0.0",
     "@types/vue-router": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -111,6 +111,7 @@
     "rollup-plugin-external-globals": "^0.7.1",
     "rollup-plugin-filesize": "^9.1.1",
     "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.32.7",

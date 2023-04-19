@@ -2,7 +2,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve' // 解析 node_modules
 import commonjs from '@rollup/plugin-commonjs' // cjs => esm
 import alias from '@rollup/plugin-alias' // alias 和 reslove 功能
 import replace from '@rollup/plugin-replace'
-// import eslint from '@rollup/plugin-eslint'
+import postcss from 'rollup-plugin-postcss'
 import { babel } from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import typescript from '@rollup/plugin-typescript'
@@ -57,6 +57,19 @@ export default {
       include: 'node_modules/**'
     }),
     // eslint(),
-    babel({ babelHelpers: 'bundled' })
+    babel({ babelHelpers: 'bundled' }),
+    postcss({
+      extensions: ['.scss'],
+      extract: false, // 如果要将样式提取到单独的 CSS 文件，请将此选项设置为 true
+      minimize: true, // 压缩 CSS
+      use: [
+        [
+          'sass',
+          {
+            includePaths: ['node_modules']
+          }
+        ]
+      ]
+    })
   ]
 }

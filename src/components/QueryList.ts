@@ -220,6 +220,7 @@ export const QueryList = composeExport(QueryListInner, {
   Toolbar,
   Form,
   Table,
-  QueryActionBtn
+  QueryActionBtn,
+  useQueryList
 })
 export default QueryList
