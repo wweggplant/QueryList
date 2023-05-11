@@ -1,4 +1,4 @@
-import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref } from 'vue-demi'
+import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef } from 'vue-demi'
 import { useQueryClient, useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
 import { h, useField, useFieldSchema, Fragment, useForm } from '@formily/vue'
 import type { Field } from '@formily/core'
@@ -34,19 +34,8 @@ export interface QueryListAction<T> {
   queryTable: any
   queryForm: any
   queryResult: any
-  selectedRecords: {
-    list: Ref<T[]>
-    update: (list: T[]) => void
-  }
-  paginationContext: {
-    currentPage: Ref<number>
-    total: Ref<number>
-    pageSize: Ref<number>
-    totalPage: Ref<number>
-    changePage: (p: number) => void
-    changePageSize: (size: number) => void
-    changeTotal: (t: number) => void
-  }
+  selectedRecords: Ref<T>
+  paginationContext: ComputedRef<PaginationAction>
 }
 export const useQueryList = () => inject(QueryBaseSymbol)
 export const useSelectedRecords = <T>() => {
@@ -224,7 +213,7 @@ export const Form = defineComponent<IQueryListFormProps>({
     }
   }
 })
-export function WithTableAction (WrappedComponent, setup?) {
+export function ActionHOC (WrappedComponent, setup?) {
   return defineComponent({
     setup (props, { attrs, listeners, slots }) {
       const queryList = useQueryList()
@@ -244,7 +233,7 @@ export function WithTableAction (WrappedComponent, setup?) {
   })
 }
 
-const QueryActionBtn = WithTableAction(DefaultQueryButton)
+const QueryActionBtn = ActionHOC(DefaultQueryButton)
 export const QueryList = composeExport(QueryListInner, {
   Toolbar,
   Form,

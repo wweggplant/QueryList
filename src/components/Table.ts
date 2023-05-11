@@ -31,7 +31,7 @@ import { ArrayBase, Space } from '@formily/element'
 import { stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
 import './style.scss'
-import { useQueryList, useSelectedRecords, WithTableAction } from './QueryList'
+import { useQueryList, useSelectedRecords, ActionHOC } from './QueryList'
 
 const RecursionField = _RecursionField as unknown as Component
 
@@ -604,7 +604,7 @@ const ArrayAddition = defineComponent({
     }
   }
 })
-const ActionBtn = WithTableAction(DefaultQueryButton, () => {
+const ActionBtn = ActionHOC(DefaultQueryButton, () => {
   const record = ArrayBase.useRecord()
   return {
     record
