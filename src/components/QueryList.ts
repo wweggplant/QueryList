@@ -7,6 +7,7 @@ import Table, { PaginationSymbol, type PaginationAction } from './Table'
 import { QueryBaseSymbol, SelectedRecordsSymbol, UniqueQueryKey, stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
 import './style.scss'
+import type { ElTable } from 'element-ui/types/table'
 
 type IQueryParams = {
 
@@ -30,6 +31,7 @@ export interface QueryListAction<T> {
   listeners: any
   API: {
     query: (resetPagin?: boolean) => Promise<any>
+    setTableRef: (ref: ElTable) => void
   }
   queryTable: any
   queryForm: any
@@ -113,6 +115,10 @@ const QueryListInner = defineComponent<QueryListProps>({
         }
         return await queryResult.refetch()
         // await queryClient.fetchQuery({ queryKey, queryFn })
+      },
+      tableRef: ref(),
+      setTableRef (ref: ElTable) {
+        API.tableRef.value = ref
       }
     }
     provide(QueryBaseSymbol, {

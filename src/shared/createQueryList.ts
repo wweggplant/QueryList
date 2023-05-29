@@ -100,10 +100,10 @@ const createQueryList: IcreateQueryListContextRuturn = (scope, components, formP
       SchemaField
     },
     props: ['schema'],
-    setup (props) {
+    setup (props, { attrs }) {
       const form = createForm(formProps)
       return () => {
-        return h(Form, { props: { form } }, { default: () => [h(SchemaField, { props: { schema: props.schema } }, {})] })
+        return h(Form, { props: { previewTextPlaceholder: ' ', form, ...attrs } }, { default: () => [h(SchemaField, { props: { schema: props.schema } }, {})] })
       }
     }
 

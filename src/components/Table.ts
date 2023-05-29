@@ -26,7 +26,7 @@ import {
   useField,
   useFieldSchema
 } from '@formily/vue'
-import { computed, defineComponent, inject, ref, Ref } from 'vue-demi'
+import { computed, defineComponent, inject, ref, Ref, onMounted } from 'vue-demi'
 import { ArrayBase, Space } from '@formily/element'
 import { stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
@@ -334,8 +334,8 @@ const usePagination = () => {
   return inject<Ref<PaginationAction>>(PaginationSymbol, ref({ totalPage: 1 }))
 }
 
-const QueryTalbePagination = defineComponent<IArrayTablePaginationProps>({
-  name: 'QueryTalbePagination',
+const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
+  name: 'QueryTablePagination',
   inheritAttrs: false,
   setup (props, { attrs, slots }) {
     const prefixCls = `${stylePrefix}-array-table`
@@ -435,17 +435,21 @@ const ArrayTableInner = observer(
     setup (props, { attrs, listeners, slots }) {
       const fieldRef = useField<ArrayField>()
       const schemaRef = useFieldSchema()
+      const tableRef = ref<ElTable | null>(null)
+      const rootQueryList = useQueryList()
       const prefixCls = `${stylePrefix}-array-table`
       const { getKey, keyMap } = ArrayBase.useKey(schemaRef.value)
 
       const defaultRowKey = (record: any) => {
         return getKey(record)
       }
+      onMounted(() => {
+        tableRef.value && rootQueryList?.API.setTableRef(tableRef.value)
+      })
       const { update: updateSelectedRecords } = useSelectedRecords() ?? {}
       return () => {
         const field = fieldRef.value
         const dataSource = Array.isArray(field.value) ? field.value.slice() : []
-        const rootQueryList = useQueryList()
         const isFetching = rootQueryList?.queryResult.isFetching
         const pagination = rootQueryList?.rootProps?.pagination
         const sources = getArrayTableSources(fieldRef, schemaRef)
@@ -535,7 +539,8 @@ const ArrayTableInner = observer(
                               updateSelectedRecords(list)
                               listeners?.['selection-change']?.(list)
                             }
-                          }
+                          },
+                          ref: tableRef
                         },
                         {
                           ...slots,
@@ -555,7 +560,7 @@ const ArrayTableInner = observer(
           return renderTable(dataSource)
         }
         return h(
-          QueryTalbePagination,
+          QueryTablePagination,
           {
 
             directives: [

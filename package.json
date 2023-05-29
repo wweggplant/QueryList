@@ -20,7 +20,7 @@
     "dev": "rollup -w --environment NODE_ENV:development -c scripts/rollup.config.dev.js",
     "build": "rollup --environment NODE_ENV:development -c scripts/rollup.config.prod.js",
     "major": "npm --no-git-tag-version version major",
-    "minory": "npm --no-git-tag-version version minor",
+    "minor": "npm --no-git-tag-version version minor",
     "patch": "npm --no-git-tag-version version patch",
     "lint": "eslint src",
     "fix": "npm run lint --fix",
@@ -29,7 +29,7 @@
     "test:c": "jest --coverage",
     "prepublish": "npm run build",
     "pub": "npm publish --access=public",
-    "unpub": "npm unpublish --access=public --force",
+    "unpublish": "npm unpublish --access=public --force",
     "release": "standard-version",
     "release:alpha": "npm run release -- --prerelease alpha"
   },
