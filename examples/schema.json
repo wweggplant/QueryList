@@ -11,7 +11,9 @@
         "pagination": {
           "pageSize":3
         },
-        "queryFn": "{{queryFn}}"
+        "queryFn": "{{queryFn}}",
+        "@mounted": "{{mounted}}",
+        "@updateSelectedRecords": "{{handleSelectedRecordsUpdate}}"
       },
       "properties": {
         "QueryForm": {

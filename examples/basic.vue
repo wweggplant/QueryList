@@ -19,20 +19,28 @@ const QueryListWrapper = createQueryList({
       total,
     }
   },
+  mounted(...args) {
+    console.log('mounted')
+    console.log(args)
+  },
+  handleSelectedRecordsUpdate(selectedRecords) {
+    console.log('handleSelectedRecordsUpdate')
+    console.log(selectedRecords)
+  },
   batchDel(querylist, ...args) {
     const { API, selectedRecords } = querylist
     console.log('执行删除操作')
     console.log(selectedRecords.value, 'selectedRecords')
     console.log(args)
     // 执行查询
-    API.doQuery()
+    API.query()
   },
   delRow(querylist, obj, ...args) {
     const { API } = querylist
     console.log('执行删除操作')
     console.log(obj.record, '')
     // 执行查询
-    API.doQuery()
+    API.query()
   }
 })
 export default defineComponent({

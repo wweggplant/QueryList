@@ -446,6 +446,7 @@ const ArrayTableInner = observer(
         const field = fieldRef.value
         const dataSource = Array.isArray(field.value) ? field.value.slice() : []
         const rootQueryList = useQueryList()
+        const isFetching = rootQueryList?.queryResult.isFetching
         const pagination = rootQueryList?.rootProps?.pagination
         const sources = getArrayTableSources(fieldRef, schemaRef)
         const columns = getArrayTableColumns(sources)
@@ -556,6 +557,13 @@ const ArrayTableInner = observer(
         return h(
           QueryTalbePagination,
           {
+
+            directives: [
+              {
+                name: 'loading',
+                value: isFetching.value
+              }
+            ],
             attrs: {
               ...(isBool(pagination) ? {} : pagination),
               dataSource

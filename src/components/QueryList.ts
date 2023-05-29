@@ -1,5 +1,5 @@
-import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef } from 'vue-demi'
-import { useQueryClient, useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
+import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted } from 'vue-demi'
+import { useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
 import { h, useField, useFieldSchema, Fragment, useForm } from '@formily/vue'
 import type { Field } from '@formily/core'
 import { Space, Submit, Reset, FormButtonGroup, type SpaceProps } from '@formily/element'
@@ -29,7 +29,7 @@ export interface QueryListAction<T> {
   rootProps: any
   listeners: any
   API: {
-    doQuery: (resetPagin?: boolean) => Promise<void>
+    query: (resetPagin?: boolean) => Promise<any>
   }
   queryTable: any
   queryForm: any
@@ -52,10 +52,10 @@ type IListResult = unknown[]
 const QueryListInner = defineComponent<QueryListProps>({
   name: 'QueryList',
   props: ['queryOptions', 'queryFn', 'pagination'],
-  setup (props, { slots, listeners }) {
+  setup (props, { slots, listeners, emit }) {
     const field = useField()
     const schema = useFieldSchema()
-    const queryClient = useQueryClient()
+    // const queryClient = useQueryClient()
     const form = useForm()
     const page = ref(1)
     const total = ref(0)
@@ -97,20 +97,22 @@ const QueryListInner = defineComponent<QueryListProps>({
       list: selectedRecords,
       update: (list) => {
         selectedRecords.value = list
+        emit('updateSelectedRecords', list)
       }
     })
     const queryKey = [UniqueQueryKey, readonly(page)]
     const queryOptions = { queryKey, queryFn, onSuccess, structuralSharing: false, refetchOnWindowFocus: false, keepPreviousData: true, ...props.queryOptions }
     const queryResult = useQuery(queryOptions)
     const API = {
-      async doQuery (form, resetPagin: boolean = true) {
+      async query (form, resetPagin: boolean = true) {
         if (resetPagin) {
           paginationContext.value.changePage?.(1)
         }
         if (form) {
           queryForm.value?.setValue(form)
         }
-        await queryClient.fetchQuery({ queryKey, queryFn })
+        return await queryResult.refetch()
+        // await queryClient.fetchQuery({ queryKey, queryFn })
       }
     }
     provide(QueryBaseSymbol, {
@@ -124,6 +126,9 @@ const QueryListInner = defineComponent<QueryListProps>({
       queryResult,
       selectedRecords,
       paginationContext
+    })
+    onMounted(() => {
+      emit('mounted', { ...API, selectedRecords, paginationContext })
     })
     return () => {
       return h(Fragment, {}, slots)
@@ -177,7 +182,8 @@ export const Form = defineComponent<IQueryListFormProps>({
     return () => {
       const queryList = useQueryList()
       const onSubmit: (values: any) => Promise<any> | any = async () => {
-        await queryList?.API.doQuery()
+        if (queryList?.queryResult.isFetching.value) return
+        await queryList?.API.query()
       }
       const submitText = _props.buttonGroup.submitText
       const resetText = _props.buttonGroup.resetText
@@ -234,6 +240,7 @@ export function ActionHOC (WrappedComponent, setup?) {
 }
 
 const QueryActionBtn = ActionHOC(DefaultQueryButton)
+
 export const QueryList = composeExport(QueryListInner, {
   Toolbar,
   Form,

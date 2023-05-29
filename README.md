@@ -50,7 +50,7 @@ const App = defineComponent({
 export interface QueryListAction<T> {
   // ...
   API: {
-    doQuery: (resetPagin?: boolean) => Promise<void> // 表单查询
+    query: (resetPagin?: boolean) => Promise<void> // 表单查询
   }
   queryTable: any
   queryForm: any
@@ -107,14 +107,14 @@ const QueryListWrapper = createQueryList({
     console.log(selectedRecords, '选中的记录')
     console.log(args)
     // 执行查询
-    API.doQuery()
+    API.query()
   },
   delRow(querylist, obj, ...args) {
     const { API } = querylist
     console.log('执行删除操作')
     console.log(obj.record, '')
     // 执行查询
-    API.doQuery()
+    API.query()
   }
 })
 export default defineComponent({
