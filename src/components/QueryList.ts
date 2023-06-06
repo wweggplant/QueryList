@@ -221,7 +221,7 @@ export const Form = defineComponent<IQueryListFormProps>({
           ]
         })
       }
-      return h('div', { class: `${stylePrefix}-query-list-form`, ...attrs }, { default: () => [slots?.default?.(), renderFormButtonGroup()] })
+      return h('div', { ...attrs }, { default: () => [slots?.default?.(), renderFormButtonGroup()] })
     }
   }
 })

@@ -355,7 +355,6 @@ const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
     })
 
     const renderPagination = function () {
-      if (totalPage.value <= 1) return
       return h(
         'div',
         {
