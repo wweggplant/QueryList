@@ -3,12 +3,12 @@ const mockMap = {
     // res.status(500).send('Internal Server Error');
     // return
     // express response delay 2000ms
-    const { page } = req.query;
+    const { page, size } = req.query;
     setTimeout(() => {
       res.json({
         data: {
           current: +page,
-          total:10,
+          total:18,
           list: [
             // array
             {
@@ -21,7 +21,7 @@ const mockMap = {
               department_name: `department_name1${page}`,
             },
             {
-              id: 1,
+              id: 2,
               username: 'kenny2',
               sex: 6,
               cname: `cname2${page}`,
@@ -30,18 +30,18 @@ const mockMap = {
               department_name: `department_name2${page}`,
             },
             {
-              id: 1,
+              id: 3,
               username: 'kenny3',
               sex: 6,
               cname: `cname3${page}`,
               email: `email3${page}`,
               mobile: `mobile3${page}`,
               department_name: `department_name3${page}`,
-            },
+            }
           ]
         }
       });
-    }, 2000)
+    }, 500)
 
   },
   'DELETE /api/user/:id': (req, res) => {

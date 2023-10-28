@@ -63,7 +63,7 @@ const QueryListInner = defineComponent<QueryListProps>({
     const total = ref(0)
     const pageSize = ref(props.pagination?.pageSize ?? 10)
     const queryFn: (context) => Promise<any> = async (context: QueryFunctionContext) => {
-      return await props.queryFn?.({ form: queryForm.value?.value, currentPagin: { currentPage: page.value } }, context)
+      return await props.queryFn?.({ form: queryForm.value?.value, currentPagin: { currentPage: page.value, pageSize: pageSize.value } }, context)
     }
     const queryTable = computed(() => form.value?.query('QueryTable').take() as Field)
     const queryForm = {
@@ -89,7 +89,7 @@ const QueryListInner = defineComponent<QueryListProps>({
         pageSize: pageSize.value,
         totalPage: Math.ceil(total.value / pageSize.value),
         changePage: (p: number) => (page.value = p),
-        changePageSize: (size: number) => (pageSize.value = size),
+        changePageSize: (size: number) => { pageSize.value = size; page.value = 1 },
         changeTotal: (t: number) => (total.value = t)
       })
     })
@@ -102,7 +102,7 @@ const QueryListInner = defineComponent<QueryListProps>({
         emit('updateSelectedRecords', list)
       }
     })
-    const queryKey = [UniqueQueryKey, readonly(page)]
+    const queryKey = [UniqueQueryKey, readonly(page), readonly(pageSize)]
     const queryOptions = { queryKey, queryFn, onSuccess, structuralSharing: false, refetchOnWindowFocus: false, keepPreviousData: true, ...props.queryOptions }
     const queryResult = useQuery(queryOptions)
     const API = {

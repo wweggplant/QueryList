@@ -8,10 +8,10 @@ import type { Component, VNode } from 'vue'
 import {
   type Pagination as PaginationProps,
   type TableColumn as ElColumnProps,
-  Badge,
-  Option,
+  // Badge,
+  // Option,
   Pagination,
-  Select,
+  // Select,
   Table as ElTable,
   TableColumn as ElTableColumn
 } from 'element-ui'
@@ -224,11 +224,11 @@ const renderAddition = () => {
   }, null)
 }
 
-const schedulerRequest: { request: NodeJS.Timeout | null } = {
+/* const schedulerRequest: { request: NodeJS.Timeout | null } = {
   request: null
 }
 
-const StatusSelect = observer(
+ const StatusSelect = observer(
   defineComponent({
     props: {
       value: Number,
@@ -328,7 +328,7 @@ const StatusSelect = observer(
       }, 100)
     }
   }
-)
+) */
 
 const usePagination = () => {
   return inject<Ref<PaginationAction>>(PaginationSymbol, ref({ totalPage: 1 }))
@@ -344,7 +344,7 @@ const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
     const pageSize = ref(attrs?.pageSize as number ?? 10)
     const startIndex = computed(() => (current.value - 1) * pageSize.value)
     const totalPage = computed(() => pagination.value.totalPage)
-    const pages = computed(() => {
+    /* const pages = computed(() => {
       return Array.from(new Array(totalPage.value)).map((_, index) => {
         const page = index + 1
         return {
@@ -352,7 +352,7 @@ const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
           value: page
         }
       })
-    })
+    }) */
 
     const renderPagination = function () {
       return h(
@@ -371,7 +371,7 @@ const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
               },
               {
                 default: () => [
-                  h(
+                  /*                   h(
                     StatusSelect,
                     {
                       props: {
@@ -384,21 +384,25 @@ const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
                       }
                     },
                     {}
-                  ),
+                  ), */
                   h(
                     Pagination,
                     {
                       props: {
                         background: true,
-                        layout: 'prev, pager, next',
+                        layout: 'total, sizes, prev, pager, next, jumper',
                         ...attrs,
                         pageSize: pageSize.value,
                         pageCount: totalPage.value,
+                        total: pagination.value?.total,
                         currentPage: current.value
                       },
                       on: {
                         'current-change': (val: number) => {
                           pagination.value?.changePage?.(val)
+                        },
+                        'size-change': (val: number) => {
+                          pagination.value?.changePageSize?.(val)
                         }
                       }
                     },

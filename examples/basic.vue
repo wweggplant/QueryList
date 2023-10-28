@@ -8,7 +8,8 @@ import { createQueryList } from '../src/index'
 import schema from './schema.json'
 const QueryListWrapper = createQueryList({
   queryFn: async ({ form, currentPagin, }) => { 
-    const response = await fetch(`/api/getQueryListData?name=${form?.name ?? ''}&type=${form?.type ?? ''}&page=${currentPagin.currentPage}`)
+    console.log(currentPagin, 'currentPagin')
+    const response = await fetch(`/api/getQueryListData?name=${form?.name ?? ''}&type=${form?.type ?? ''}&page=${currentPagin.currentPage}&size=${currentPagin.currentPagin}`)
     if (!response.ok) {
       throw new Error('Network response was not ok')
     }

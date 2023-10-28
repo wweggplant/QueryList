@@ -9,7 +9,7 @@
           "a": 123
         },
         "pagination": {
-          "pageSize":3
+          "pageSize":10
         },
         "queryFn": "{{queryFn}}",
         "@mounted": "{{mounted}}",
