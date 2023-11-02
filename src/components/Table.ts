@@ -317,7 +317,7 @@ const ArrayTableInner = observer(
     props: {
       rowSelectedFunction: {
         type: Function,
-        default: () => true
+        default: null
       }
     },
     setup (props, { attrs, listeners, slots, refs }) {
@@ -330,7 +330,7 @@ const ArrayTableInner = observer(
       function syncRowSelectionState () {
         const field = fieldRef.value
         const dataSource = Array.isArray(field.value) ? field.value.slice() : []
-        if (props.rowSelectedFunction) {
+        if (props?.rowSelectedFunction) {
           dataSource.forEach((item, i) => {
             tableRef.value?.toggleRowSelection(item, props.rowSelectedFunction(item, i))
           })
