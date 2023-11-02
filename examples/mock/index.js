@@ -1,48 +1,26 @@
+const { faker } = require('@faker-js/faker');
 const mockMap = {
   'GET /api/getQueryListData': (req, res) => {
-    // res.status(500).send('Internal Server Error');
-    // return
-    // express response delay 2000ms
-    const { page, size } = req.query;
+    const { page } = req.query;
+    const size  = req.query.size ?? 10;
+    const list = Array.from({ length: size }).map(() => ({
+      id: faker.datatype.uuid(),
+      username: faker.internet.userName(),
+      sex: faker.datatype.number({ min: 1, max: 2 }),
+      cname: faker.internet.userName(),
+      email: faker.internet.email(),
+      mobile: faker.phone.number(),
+      department_name: faker.commerce.department(),
+    }));
     setTimeout(() => {
       res.json({
         data: {
           current: +page,
-          total:18,
-          list: [
-            // array
-            {
-              id: 1,
-              username: 'kenny1',
-              sex: 6,
-              cname: `cname1${page}`,
-              email: `email${page}`,
-              mobile: `mobile1${page}`,
-              department_name: `department_name1${page}`,
-            },
-            {
-              id: 2,
-              username: 'kenny2',
-              sex: 6,
-              cname: `cname2${page}`,
-              email: `email2${page}`,
-              mobile: `mobile2${page}`,
-              department_name: `department_name2${page}`,
-            },
-            {
-              id: 3,
-              username: 'kenny3',
-              sex: 6,
-              cname: `cname3${page}`,
-              email: `email3${page}`,
-              mobile: `mobile3${page}`,
-              department_name: `department_name3${page}`,
-            }
-          ]
+          total: 18,  // You can adjust this based on the number of total mock data you want to have
+          list
         }
       });
-    }, 500)
-
+    }, 500);
   },
   'DELETE /api/user/:id': (req, res) => {
     console.log('---->', req.body);
@@ -50,4 +28,5 @@ const mockMap = {
     res.send({ status: 'ok', message: 'delete success!' });
   },
 };
+
 module.exports = mockMap;

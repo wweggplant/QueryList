@@ -22,7 +22,7 @@ interface QueryListProps {
   pagination: {
     pageSize: number
   }
-  queryFn: (query: { form: IQueryParams, currentPagin: IQueryFnPagination }, context: QueryFunctionContext) => Promise<any>
+  queryFn: (query: { form: IQueryParams, currentPagination: IQueryFnPagination }, context: QueryFunctionContext) => Promise<any>
 }
 export interface QueryListAction<T> {
   field: any
@@ -63,7 +63,7 @@ const QueryListInner = defineComponent<QueryListProps>({
     const total = ref(0)
     const pageSize = ref(props.pagination?.pageSize ?? 10)
     const queryFn: (context) => Promise<any> = async (context: QueryFunctionContext) => {
-      return await props.queryFn?.({ form: queryForm.value?.value, currentPagin: { currentPage: page.value, pageSize: pageSize.value } }, context)
+      return await props.queryFn?.({ form: queryForm.value?.value, currentPagination: { currentPage: page.value, pageSize: pageSize.value } }, context)
     }
     const queryTable = computed(() => form.value?.query('QueryTable').take() as Field)
     const queryForm = {

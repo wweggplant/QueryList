@@ -7,9 +7,9 @@ import { defineComponent } from 'vue-demi'
 import { createQueryList } from '../src/index'
 import schema from './schema.json'
 const QueryListWrapper = createQueryList({
-  queryFn: async ({ form, currentPagin, }) => { 
-    console.log(currentPagin, 'currentPagin')
-    const response = await fetch(`/api/getQueryListData?name=${form?.name ?? ''}&type=${form?.type ?? ''}&page=${currentPagin.currentPage}&size=${currentPagin.currentPagin}`)
+  queryFn: async ({ form, currentPagination, }) => { 
+    console.log(currentPagination, 'currentPagination')
+    const response = await fetch(`/api/getQueryListData?name=${form?.name ?? ''}&type=${form?.type ?? ''}&page=${currentPagination.currentPage}&size=${currentPagination.pageSize ?? 10}`)
     if (!response.ok) {
       throw new Error('Network response was not ok')
     }
