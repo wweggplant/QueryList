@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.1-alpha.10](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.1-alpha.9...v0.0.1-alpha.10) (2023-11-02)
+
+
+### Features
+
+* 优化mock数据 ([15436b1](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/15436b1b356d8b36dfb7a9db7e0740c38064aa30))
+* Table组件添加勾选项的控制逻辑 ([739e4e1](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/739e4e17dd3a4c179336443b736f9cedcf0c82e4))
+
 ### [0.0.1-alpha.9](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.1-alpha.8...v0.0.1-alpha.9) (2023-10-28)
 
 
