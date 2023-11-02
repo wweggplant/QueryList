@@ -26,7 +26,7 @@ import {
   useField,
   useFieldSchema
 } from '@formily/vue'
-import { computed, defineComponent, inject, ref, Ref, onMounted } from 'vue-demi'
+import { computed, defineComponent, inject, ref, Ref, onMounted, nextTick, getCurrentInstance } from 'vue-demi'
 import { ArrayBase, Space } from '@formily/element'
 import { stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
@@ -223,113 +223,6 @@ const renderAddition = () => {
     return addition
   }, null)
 }
-
-/* const schedulerRequest: { request: NodeJS.Timeout | null } = {
-  request: null
-}
-
- const StatusSelect = observer(
-  defineComponent({
-    props: {
-      value: Number,
-      onChange: Function,
-      options: Array,
-      pageSize: Number
-    },
-    setup (props) {
-      const fieldRef = useField<ArrayField>()
-      const prefixCls = `${stylePrefix}-array-table`
-
-      return () => {
-        const field = fieldRef.value
-        const width = String(props.options?.length).length * 15
-        const errors = field.errors
-        const parseIndex = (address: string) => {
-          return Number(
-            address
-              .slice(address.indexOf(field.address.toString()) + 1)
-              .match(/(\d+)/)?.[1]
-          )
-        }
-
-        return h(
-          Select,
-          {
-            style: {
-              width: `${width < 60 ? 60 : width}px`
-            },
-            class: [
-              `${prefixCls}-status-select`,
-              {
-                'has-error': errors?.length
-              }
-            ],
-            props: {
-              size: 'mini',
-              value: props.value,
-              popperClass: `${prefixCls}-status-select-dropdown`
-            },
-            on: {
-              input: props.onChange
-            }
-          },
-          {
-            default: () => {
-              return props.options?.map(({ label, value }) => {
-                const hasError = errors.some(({ address }) => {
-                  const pageSize = props.pageSize as number
-                  const currentIndex = parseIndex(address as string)
-                  const startIndex = (value - 1) * pageSize
-                  const endIndex = value * pageSize
-                  return currentIndex >= startIndex && currentIndex <= endIndex
-                })
-
-                return h(
-                  Option,
-                  {
-                    key: value,
-                    props: {
-                      label,
-                      value
-                    }
-                  },
-                  {
-                    default: () => {
-                      if (hasError) {
-                        return h(
-                          Badge,
-                          {
-                            props: {
-                              isDot: true
-                            }
-                          },
-                          { default: () => label }
-                        )
-                      }
-
-                      return label
-                    }
-                  }
-                )
-              }) ?? []
-            }
-          }
-        )
-      }
-    }
-  }),
-  {
-    scheduler: (update) => {
-      if (schedulerRequest.request) {
-        clearTimeout(schedulerRequest.request)
-      }
-      schedulerRequest.request = setTimeout(() => {
-        update()
-      }, 100)
-    }
-  }
-) */
-
 const usePagination = () => {
   return inject<Ref<PaginationAction>>(PaginationSymbol, ref({ totalPage: 1 }))
 }
@@ -371,20 +264,6 @@ const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
               },
               {
                 default: () => [
-                  /*                   h(
-                    StatusSelect,
-                    {
-                      props: {
-                        value: current.value,
-                        onChange: (val: number) => {
-                          pagination.value?.changePage?.(val)
-                        },
-                        pageSize: pageSize.value,
-                        options: pages.value
-                      }
-                    },
-                    {}
-                  ), */
                   h(
                     Pagination,
                     {
@@ -432,21 +311,41 @@ const QueryTablePagination = defineComponent<IArrayTablePaginationProps>({
 })
 
 const ArrayTableInner = observer(
-  defineComponent({
+  defineComponent<{ rowSelectedFunction: Function }>({
     name: 'QueryTable',
     inheritAttrs: false,
-    setup (props, { attrs, listeners, slots }) {
+    props: {
+      rowSelectedFunction: {
+        type: Function,
+        default: () => true
+      }
+    },
+    setup (props, { attrs, listeners, slots, refs }) {
       const fieldRef = useField<ArrayField>()
       const schemaRef = useFieldSchema()
-      const tableRef = ref<ElTable | null>(null)
+      const tableRef = ref<any>(null)
       const rootQueryList = useQueryList()
       const prefixCls = `${stylePrefix}-array-table`
       const { getKey, keyMap } = ArrayBase.useKey(schemaRef.value)
-
+      function syncRowSelectionState () {
+        const field = fieldRef.value
+        const dataSource = Array.isArray(field.value) ? field.value.slice() : []
+        if (props.rowSelectedFunction) {
+          dataSource.forEach((item, i) => {
+            tableRef.value?.toggleRowSelection(item, props.rowSelectedFunction(item, i))
+          })
+        }
+      }
       const defaultRowKey = (record: any) => {
         return getKey(record)
       }
       onMounted(() => {
+        if (refs.QueryTable) {
+          tableRef.value = (refs.QueryTable as ElTable)?.$children?.[0].$children?.[0] ?? null
+        }
+        if (refs.QueryTablePagination) {
+          tableRef.value = (refs.QueryTablePagination as ElTable)?.$children?.[0].$children?.[0].$children?.[0] ?? null
+        }
         tableRef.value && rootQueryList?.API.setTableRef(tableRef.value)
       })
       const { update: updateSelectedRecords } = useSelectedRecords() ?? {}
@@ -457,7 +356,9 @@ const ArrayTableInner = observer(
         const pagination = rootQueryList?.rootProps?.pagination
         const sources = getArrayTableSources(fieldRef, schemaRef)
         const columns = getArrayTableColumns(sources)
-
+        nextTick(() => {
+          syncRowSelectionState()
+        })
         const renderColumns = () => {
           return columns.map(({ key, render, asterisk, ...props }) => {
             const children = {} as any
@@ -509,7 +410,10 @@ const ArrayTableInner = observer(
               {}
             )
           })
-
+        function onMounted () {
+          // 获取当前实例
+          console.log('getCurrentInstance', getCurrentInstance())
+        }
         const renderTable = (
           dataSource?: any[],
           pager?: () => VNode
@@ -524,7 +428,8 @@ const ArrayTableInner = observer(
                   {
                     props: {
                       keyMap
-                    }
+                    },
+                    ref: 'QueryTable'
                   },
                   {
                     default: () => [
@@ -541,9 +446,9 @@ const ArrayTableInner = observer(
                             'selection-change' (list) {
                               updateSelectedRecords(list)
                               listeners?.['selection-change']?.(list)
-                            }
-                          },
-                          ref: tableRef
+                            },
+                            'hook:mounted': onMounted
+                          }
                         },
                         {
                           ...slots,
@@ -565,7 +470,7 @@ const ArrayTableInner = observer(
         return h(
           QueryTablePagination,
           {
-
+            ref: 'QueryTablePagination',
             directives: [
               {
                 name: 'loading',
