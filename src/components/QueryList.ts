@@ -2,6 +2,7 @@ import { defineComponent, provide, inject, ref, computed, readonly, shallowReact
 import { useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
 import { h, useField, useFieldSchema, Fragment, useForm } from '@formily/vue'
 import type { Field } from '@formily/core'
+import { observable } from '@formily/reactive'
 import { Space, Submit, Reset, FormButtonGroup, type SpaceProps } from '@formily/element'
 import Table, { PaginationSymbol, type PaginationAction } from './Table'
 import { QueryBaseSymbol, SelectedRecordsSymbol, UniqueQueryKey, stylePrefix } from '../shared/const'
@@ -63,14 +64,11 @@ const QueryListInner = defineComponent<QueryListProps>({
     const total = ref(0)
     const pageSize = ref(props.pagination?.pageSize ?? 10)
     const queryFn: (context) => Promise<any> = async (context: QueryFunctionContext) => {
-      return await props.queryFn?.({ form: queryForm.value?.value, currentPagination: { currentPage: page.value, pageSize: pageSize.value } }, context)
+      return await props.queryFn?.({ form: queryFormValues.value, currentPagination: { currentPage: page.value, pageSize: pageSize.value } }, context)
     }
     const queryTable = computed(() => form.value?.query('QueryTable').take() as Field)
-    const queryForm = {
-      get value () {
-        return (form.value?.query('QueryForm').take() as Field)
-      }
-    }
+    const queryFormValues = observable.computed(() => form.value?.values.QueryForm)
+    const queryForm = observable.computed(() => (form.value?.query('QueryForm').take() as Field))
     const onSuccess = (data: IListPageResult | IListResult) => {
       if (!Array.isArray(data)) {
         const { list, currentPage, total } = data
@@ -106,8 +104,8 @@ const QueryListInner = defineComponent<QueryListProps>({
     const queryOptions = { queryKey, queryFn, onSuccess, structuralSharing: false, refetchOnWindowFocus: false, keepPreviousData: true, ...props.queryOptions }
     const queryResult = useQuery(queryOptions)
     const API = {
-      async query (form, resetPagin: boolean = true) {
-        if (resetPagin) {
+      async query (form, resetPagination: boolean = true) {
+        if (resetPagination) {
           paginationContext.value.changePage?.(1)
         }
         if (form) {
