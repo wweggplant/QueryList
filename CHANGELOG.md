@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.1-alpha.14](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.1-alpha.13...v0.0.1-alpha.14) (2023-11-29)
+
+
+### Bug Fixes
+
+* 修复初始查询时机的问题 ([796e436](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/796e4360acdac8381ea4e2a11ddc6ec3d272e33b))
+
 ### [0.0.1-alpha.13](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.1-alpha.12...v0.0.1-alpha.13) (2023-11-29)
 
 ### [0.0.1-alpha.12](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.1-alpha.11...v0.0.1-alpha.12) (2023-11-21)
