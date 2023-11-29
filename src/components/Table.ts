@@ -31,7 +31,7 @@ import { ArrayBase, Space } from '@formily/element'
 import { stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
 import './style.scss'
-import { useQueryList, useSelectedRecords, ActionHOC } from './QueryList'
+import { useQueryList, useSelectedRecords, ActionHOC, useQueryContext } from './QueryList'
 
 const RecursionField = _RecursionField as unknown as Component
 
@@ -321,7 +321,9 @@ const ArrayTableInner = observer(
       }
     },
     setup (props, { attrs, listeners, slots, refs }) {
+      const { setTableFieldRef } = useQueryContext()
       const fieldRef = useField<ArrayField>()
+      setTableFieldRef(fieldRef.value)
       const schemaRef = useFieldSchema()
       const tableRef = ref<any>(null)
       const rootQueryList = useQueryList()

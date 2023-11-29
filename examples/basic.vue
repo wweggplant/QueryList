@@ -7,9 +7,10 @@ import { defineComponent } from 'vue-demi'
 import { createQueryList } from '../src/index'
 import schema from './schema.json'
 const QueryListWrapper = createQueryList({
-  queryFn: async ({ form, currentPagination, }) => { 
+  queryFn: async ({ form, currentPagination,queryContext }) => { 
     console.log(currentPagination, 'currentPagination')
-    const response = await fetch(`/api/getQueryListData?name=${form?.name ?? ''}&type=${form?.type ?? ''}&page=${currentPagination.currentPage}&size=${currentPagination.pageSize ?? 10}`)
+    const { toolbar } = queryContext
+    const response = await fetch(`/api/getQueryListData?name=${form?.name ?? ''}&type=${form?.type ?? ''}&used_status=${toolbar.value.used_status}&page=${currentPagination.currentPage}&size=${currentPagination.pageSize ?? 10}`)
     if (!response.ok) {
       throw new Error('Network response was not ok')
     }
@@ -19,6 +20,10 @@ const QueryListWrapper = createQueryList({
       currentPage: current,
       total,
     }
+  },
+  changeUsed(query, $getQueryContext) {
+    query()
+    console.log($getQueryContext().toolbar.value.used_status, 'used_status')
   },
   mounted(...args) {
     console.log('mounted')

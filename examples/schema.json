@@ -44,6 +44,7 @@
                   "x-validator": [],
                   "x-decorator-props": {},
                   "required": true,
+                  "default": 1,
                   "enum": [{
                     "label": "类型1",
                     "value": 1
@@ -60,7 +61,6 @@
                   "type": "string",
                   "x-validator": [],
                   "x-decorator-props": {},
-                  "required": true,
                   "name": "contract_type"
                 }
               }
@@ -83,6 +83,35 @@
               "x-component": "Button",
               "x-content": "操作b",
               "type": "void"
+            },
+            "c": {
+              "x-component": "Button",
+              "x-component-props": {
+                "@click": "{{() => $query()}}"
+              },
+              "x-content": "操作c",
+              "type": "void"
+            },
+            "used_status": {
+              "x-component": "Radio.Group",
+              "default": "0",
+              "type": "boolean",
+              "name": "used_status",
+              "x-component-props": {
+                "optionType": "button",
+                "size":"mini",
+                "@change": "{{() => changeUsed($query, $getQueryContext)}}"
+              },
+              "enum": [{
+                "label": "全部",
+                "value": "0"
+              }, {
+                "label": "已使用",
+                "value": "1"
+              }, {
+                "label": "未使用",
+                "value": "2"
+              }]
             }
           }
         },
