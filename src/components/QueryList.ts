@@ -122,7 +122,8 @@ const QueryListInner = defineComponent<QueryListProps>({
       }
     })
     const queryKey = [UniqueQueryKey, readonly(page), readonly(pageSize)]
-    const queryOptions = { queryKey, queryFn, onSuccess, structuralSharing: false, refetchOnWindowFocus: false, keepPreviousData: true, ...props.queryOptions }
+    const enabled = ref(false)
+    const queryOptions = { queryKey, queryFn, onSuccess, structuralSharing: false, refetchOnWindowFocus: false, keepPreviousData: true, enabled, ...props.queryOptions }
     const queryResult = useQuery(queryOptions)
     const API = {
       async query (resetPagination: boolean = true) {
@@ -150,7 +151,8 @@ const QueryListInner = defineComponent<QueryListProps>({
     })
     onMounted(async () => {
       emit('mounted', { ...API, selectedRecords, paginationContext })
-      await API.query()
+      enabled.value = true
+      await queryResult.refetch()
     })
     return () => {
       return h(
