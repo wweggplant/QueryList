@@ -1,6 +1,6 @@
 {
   "name": "@he-fe/query-list",
-  "version": "0.0.2",
+  "version": "0.0.3-alpha.0",
   "description": "queryList",
   "main": "dist/query-list.umd.js",
   "module": "dist/query-list.esm.js",
