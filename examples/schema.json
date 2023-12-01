@@ -20,11 +20,17 @@
           "type": "object",
           "x-component": "QueryList.Form",
           "x-component-props":{
-            "buttonGroup": {
-              "submitText": "查询数据",
-              "resetText": "重置它"
-            }
+            "buttonGroupDisabled": true
           },
+          "x-reactions": [
+            {
+              "dependencies": ["QueryForm.type"],
+              "when": "{{$deps[0] === 2 }}",
+              "fulfill": {
+                "run": "{{QueryFormRun($self)}}"
+              }
+            }
+          ],
           "properties": {
             "layout": {
               "type": "void",
@@ -64,6 +70,11 @@
                   "name": "contract_type"
                 }
               }
+            },
+            "buttons": {
+              "type": "void",
+              "x-component": "QueryList.FormButtons",
+              "x-hidden": "{{$values.QueryForm.type === 2}}"
             }
           }
         },
@@ -117,6 +128,7 @@
         },
         "QueryTable": {
           "type": "array",
+          "default": [],
           "x-read-pretty": true,
           "x-component": "QueryList.Table",
           "items": {

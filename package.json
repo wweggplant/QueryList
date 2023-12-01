@@ -28,6 +28,7 @@
     "test": "jest",
     "test:c": "jest --coverage",
     "prepublish": "npm run build",
+    "prepublish:patch": "npm run patch & npm run build",
     "pub": "npm publish --access=public",
     "unpublish": "npm unpublish --access=public --force",
     "release": "standard-version",

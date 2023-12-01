@@ -1,5 +1,5 @@
 import type { Component } from 'vue'
-import { defineComponent } from 'vue-demi'
+import { defineComponent, onUnmounted } from 'vue-demi'
 import QueryList from '../components/QueryList'
 import { createForm, type IFormProps } from '@formily/core'
 import { createSchemaField, h } from '@formily/vue'
@@ -102,11 +102,14 @@ const createQueryList: IcreateQueryListContextRuturn = (scope, components, formP
     props: ['schema'],
     setup (props, { attrs }) {
       const form = createForm(formProps)
-      return () => {
+      onUnmounted(() => {
+        form.onUnmount()
+      })
+      const render = () => {
         return h(Form, { props: { previewTextPlaceholder: ' ', form, ...attrs } }, { default: () => [h(SchemaField, { props: { schema: props.schema } }, {})] })
       }
+      return render
     }
-
   })
 }
 

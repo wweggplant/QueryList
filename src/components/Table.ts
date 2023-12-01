@@ -4,6 +4,7 @@ import {
   GeneralField,
   IVoidFieldFactoryProps
 } from '@formily/core'
+import { autorun, observable } from '@formily/reactive'
 import type { Component, VNode } from 'vue'
 import {
   type Pagination as PaginationProps,
@@ -13,12 +14,13 @@ import {
   Pagination,
   // Select,
   Table as ElTable,
-  TableColumn as ElTableColumn
+  TableColumn as ElTableColumn,
+  Loading
 } from 'element-ui'
 import type { Schema } from '@formily/json-schema'
 
 import { observer } from '@formily/reactive-vue'
-import { isArr, isBool, isFn } from '@formily/shared'
+import { isArr, isBool, isFn, uid } from '@formily/shared'
 import {
   Fragment,
   h,
@@ -26,12 +28,13 @@ import {
   useField,
   useFieldSchema
 } from '@formily/vue'
-import { computed, defineComponent, inject, ref, Ref, onMounted, nextTick, getCurrentInstance } from 'vue-demi'
+import { computed, defineComponent, inject, ref, Ref, onMounted, nextTick, watch, onUnmounted } from 'vue-demi'
 import { ArrayBase, Space } from '@formily/element'
 import { stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
 import './style.scss'
 import { useQueryList, useSelectedRecords, ActionHOC, useQueryContext } from './QueryList'
+import { ElLoadingComponent } from 'element-ui/types/loading'
 
 const RecursionField = _RecursionField as unknown as Component
 
@@ -338,6 +341,25 @@ const ArrayTableInner = observer(
           })
         }
       }
+      // let start = 0
+      const isFetching = rootQueryList?.queryResult.isFetching
+      let loading: ElLoadingComponent | null = null
+      const tableClassName = 'query-list-table-' + uid()
+      const watchStopHandle = watch(() => isFetching.value,
+        () => {
+          if (isFetching.value) {
+            // start = Date.now()
+            if (loading) {
+              return
+            }
+            loading = Loading.service({
+              target: `.${tableClassName}`
+            })
+          } else {
+            loading?.close()
+            loading = null
+          }
+        })
       const defaultRowKey = (record: any) => {
         return getKey(record)
       }
@@ -351,140 +373,138 @@ const ArrayTableInner = observer(
         tableRef.value && rootQueryList?.API.setTableRef(tableRef.value)
       })
       const { update: updateSelectedRecords } = useSelectedRecords() ?? {}
-      return () => {
-        const field = fieldRef.value
-        const dataSource = Array.isArray(field.value) ? field.value.slice() : []
-        const isFetching = rootQueryList?.queryResult.isFetching
-        const pagination = rootQueryList?.rootProps?.pagination
-        const sources = getArrayTableSources(fieldRef, schemaRef)
-        const columns = getArrayTableColumns(sources)
+      const field = fieldRef.value
+      const dataSource: Ref<any> = ref([])
+      const sources: any = observable.computed(() => getArrayTableSources(fieldRef, schemaRef))
+      const columns: any = observable.computed(() => getArrayTableColumns(sources.value))
+      const dispose = autorun(() => {
+        dataSource.value = Array.isArray(field.value) ? field.value.slice() : []
+        // sources.value = getArrayTableSources(fieldRef, schemaRef)
+        // columns.value = getArrayTableColumns(sources.value)
         nextTick(() => {
           syncRowSelectionState()
         })
-        const renderColumns = () => {
-          return columns.map(({ key, render, asterisk, ...props }) => {
-            const children = {} as any
-            if (render != null) {
-              children.default = render()
-            }
-            if (asterisk) {
-              children.header = ({ column }: { column: ElColumnProps }) =>
-                h(
-                  'span',
-                  {},
-                  {
-                    default: () => [
-                      h(
-                        'span',
-                        { class: `${prefixCls}-asterisk` },
-                        { default: () => ['*'] }
-                      ),
-                      column.label
-                    ]
-                  }
-                )
-            }
-            return h(
-              ElTableColumn,
-              {
-                key,
-                props
-              },
-              children
-            )
-          })
-        }
+      })
+      onUnmounted(() => {
+        dispose()
+        watchStopHandle()
+      })
+      const renderColumns = () => {
+        return columns.value.map(({ key, render, asterisk, ...props }) => {
+          const children = {} as any
+          if (render != null) {
+            children.default = render()
+          }
+          if (asterisk) {
+            children.header = ({ column }: { column: ElColumnProps }) =>
+              h(
+                'span',
+                {},
+                {
+                  default: () => [
+                    h(
+                      'span',
+                      { class: `${prefixCls}-asterisk` },
+                      { default: () => ['*'] }
+                    ),
+                    column.label
+                  ]
+                }
+              )
+          }
+          return h(
+            ElTableColumn,
+            {
+              key,
+              props
+            },
+            children
+          )
+        })
+      }
 
-        const renderStateManager = () =>
-          sources.map((column, key) => {
-            // 专门用来承接对Column的状态管理
-            if (!isColumnComponent(column.schema)) return h(Fragment, {}, {})
-            return h(
-              RecursionField,
+      const renderStateManager = () =>
+        sources.value.map((column, key) => {
+          // 专门用来承接对Column的状态管理
+          if (!isColumnComponent(column.schema)) return h(Fragment, {}, {})
+          return h(
+            RecursionField,
+            {
+              props: {
+                name: column.name,
+                schema: column.schema,
+                onlyRenderSelf: true
+              },
+              key
+            },
+            {}
+          )
+        })
+      const renderTable = (
+        dataSource?: any[],
+        pager?: () => VNode
+      ) => {
+        return h(
+          'div',
+          { class: `${prefixCls} ${tableClassName}` },
+          {
+            default: () => h(
+              ArrayBase,
               {
                 props: {
-                  name: column.name,
-                  schema: column.schema,
-                  onlyRenderSelf: true
+                  keyMap
                 },
-                key
+                ref: 'QueryTable'
               },
-              {}
-            )
-          })
-        function onMounted () {
-          // 获取当前实例
-          console.log('getCurrentInstance', getCurrentInstance())
-        }
-        const renderTable = (
-          dataSource?: any[],
-          pager?: () => VNode
-        ) => {
-          return h(
-            'div',
-            { class: prefixCls },
-            {
-              default: () =>
-                h(
-                  ArrayBase,
-                  {
-                    props: {
-                      keyMap
-                    },
-                    ref: 'QueryTable'
-                  },
-                  {
-                    default: () => [
-                      h(
-                        ElTable,
-                        {
-                          props: {
-                            rowKey: defaultRowKey,
-                            ...attrs,
-                            data: dataSource
-                          },
-                          on: {
-                            ...listeners,
-                            'selection-change' (list) {
-                              updateSelectedRecords(list)
-                              listeners?.['selection-change']?.(list)
-                            },
-                            'hook:mounted': onMounted
-                          }
-                        },
-                        {
-                          ...slots,
-                          default: () => renderColumns()
+              {
+                default: () => [
+                  h(
+                    ElTable,
+                    {
+                      props: {
+                        rowKey: defaultRowKey,
+                        ...attrs,
+                        data: dataSource
+                      },
+                      on: {
+                        ...listeners,
+                        'selection-change' (list) {
+                          updateSelectedRecords(list)
+                          listeners?.['selection-change']?.(list)
                         }
-                      ),
-                      pager?.(),
-                      renderStateManager(),
-                      renderAddition()
-                    ]
-                  }
-                )
-            }
-          )
-        }
+                      }
+                    },
+                    {
+                      ...slots,
+                      default: () => renderColumns()
+                    }
+                  ),
+                  pager?.(),
+                  renderStateManager(),
+                  renderAddition()
+                ]
+              }
+            )
+          }
+        )
+      }
+      return () => {
+        const pagination = rootQueryList?.rootProps?.pagination
+
         if (!pagination) {
-          return renderTable(dataSource)
+          return renderTable(dataSource.value)
         }
         return h(
           QueryTablePagination,
           {
             ref: 'QueryTablePagination',
-            directives: [
-              {
-                name: 'loading',
-                value: isFetching.value
-              }
-            ],
             attrs: {
-              ...(isBool(pagination) ? {} : pagination),
-              dataSource
+              ...(isBool(pagination) ? {} : pagination)
             }
           },
-          { default: (renderPagination) => renderTable(dataSource, renderPagination) }
+          {
+            default: (renderPagination) => renderTable(dataSource.value, renderPagination)
+          }
         )
       }
     }

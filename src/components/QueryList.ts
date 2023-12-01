@@ -1,4 +1,4 @@
-import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted } from 'vue-demi'
+import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted, toRef } from 'vue-demi'
 import { useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
 import { h, useField, useFieldSchema, Fragment, ExpressionScope } from '@formily/vue'
 import type { Field } from '@formily/core'
@@ -191,13 +191,59 @@ const Toolbar = defineComponent<ToolbarProps>({
     }
   }
 })
-
+interface IFormButtonProps {
+  buttonGroup: {
+    submitText: string | null
+    resetText: string | null
+    align: string
+    disabled: boolean
+  }
+  disabled: boolean
+}
 interface IQueryListFormProps {
   buttonGroup: {
     submitText: string | null
     resetText: string | null
     align: string
+    disabled: boolean
   }
+  buttonGroupDisabled: boolean
+}
+
+const renderFormButtonGroup = (buttonGroup, listeners) => {
+  const submitText = buttonGroup.submitText
+  const resetText = buttonGroup.resetText
+  const queryList = useQueryList()
+  const onSubmit: (values: any) => Promise<any> | any = async () => {
+    if (queryList?.queryResult.isFetching.value) return
+    await queryList?.API.query()
+  }
+  return h(FormButtonGroup, {
+    style: { },
+    props: {
+      align: 'center'
+    }
+  }, {
+    default: () => [
+      submitText !== null ? h(Submit, { props: { onSubmit } }, { default: () => [submitText] }) : null,
+      resetText !== null
+        ? h(Reset, {
+          on: {
+            click: (e: any) => {
+              if (listeners?.clickReset) {
+                if (listeners.clickReset(e) === false) return
+              }
+              queryList?.queryForm.value
+                ?.reset('*', {})
+                .then(listeners.resetValidateSuccess as (e: any) => void)
+                .catch(listeners.resetValidateFailed as (e: any) => void)
+            }
+          }
+
+        }, { default: () => [resetText] })
+        : null
+    ]
+  })
 }
 export const Form = defineComponent<IQueryListFormProps>({
   name: 'QueryListForm',
@@ -207,51 +253,50 @@ export const Form = defineComponent<IQueryListFormProps>({
       default: () => ({
         justify: 'center',
         submitText: '提交',
-        resetText: '重置'
+        resetText: '重置',
+        disabled: false
       })
+    },
+    buttonGroupDisabled: {
+      type: Boolean,
+      default: false
     }
   },
   setup (_props, { slots, attrs, listeners }) {
+    const buttonGroup = toRef(_props, 'buttonGroup')
+    const disabled = computed(() => _props.buttonGroupDisabled === undefined ? false : _props.buttonGroupDisabled) // 默认是false
+
     return () => {
-      const queryList = useQueryList()
       const field = useField()
       const { setFormFieldRef } = useQueryContext()
       setFormFieldRef(field.value)
-      const onSubmit: (values: any) => Promise<any> | any = async () => {
-        if (queryList?.queryResult.isFetching.value) return
-        await queryList?.API.query()
-      }
-      const submitText = _props.buttonGroup.submitText
-      const resetText = _props.buttonGroup.resetText
-      const renderFormButtonGroup: () => any = () => {
-        return h(FormButtonGroup, {
-          style: { },
-          props: {
-            align: 'center'
-          }
-        }, {
-          default: () => [
-            submitText !== null ? h(Submit, { props: { onSubmit } }, { default: () => [submitText] }) : null,
-            resetText !== null
-              ? h(Reset, {
-                on: {
-                  click: (e: any) => {
-                    if (listeners?.clickReset) {
-                      if (listeners.clickReset(e) === false) return
-                    }
-                    queryList?.queryForm.value
-                      ?.reset('*', {})
-                      .then(listeners.resetValidateSuccess as (e: any) => void)
-                      .catch(listeners.resetValidateFailed as (e: any) => void)
-                  }
-                }
+      return h('div', { ...attrs }, { default: () => [slots?.default?.(), disabled.value ? null : renderFormButtonGroup(buttonGroup.value, listeners)] })
+    }
+  }
+})
+export const FormButtons = defineComponent<IFormButtonProps>({
+  name: 'FormButtons',
+  props: {
+    buttonGroup: {
+      type: Object,
+      default: () => ({
+        justify: 'center',
+        submitText: '提交',
+        resetText: '重置',
+        disabled: false
+      })
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup (_props, { attrs, listeners }) {
+    const buttonGroup = toRef(_props, 'buttonGroup')
+    const disabled = computed(() => _props.disabled === undefined ? false : _props.disabled) // 默认是false
 
-              }, { default: () => [resetText] })
-              : null
-          ]
-        })
-      }
-      return h('div', { ...attrs }, { default: () => [slots?.default?.(), renderFormButtonGroup()] })
+    return () => {
+      return h('div', { ...attrs }, { default: () => [disabled.value ? null : renderFormButtonGroup(buttonGroup.value, listeners)] })
     }
   }
 })
@@ -282,6 +327,7 @@ export const QueryList = composeExport(QueryListInner, {
   Form,
   Table,
   QueryActionBtn,
+  FormButtons,
   useQueryList
 })
 export default QueryList
