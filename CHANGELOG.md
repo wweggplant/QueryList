@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3-alpha.3](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.2...v0.0.3-alpha.3) (2024-05-10)
+
 ### [0.0.3-alpha.2](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.1...v0.0.3-alpha.2) (2023-12-27)
 
 ### [0.0.3-alpha.1](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.0...v0.0.3-alpha.1) (2023-12-26)
