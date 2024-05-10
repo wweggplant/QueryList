@@ -27,6 +27,7 @@
     "commit": "git add . && git-cz",
     "test": "jest",
     "test:c": "jest --coverage",
+    "pub:alpha": "npm run prepublish && npm run release:alpha && npm run pub",
     "prepublish": "npm run build",
     "prepublish:patch": "npm run patch & npm run build",
     "pub": "npm publish --access=public",

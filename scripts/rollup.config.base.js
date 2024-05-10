@@ -45,7 +45,8 @@ export default {
       targets: ['dist']
     }),
     typescript({
-      outDir: 'dist/types'
+      outDir: 'dist/types',
+      target: 'es2019'
     }),
     alias(),
     replace({
