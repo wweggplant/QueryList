@@ -1,4 +1,4 @@
-import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted, toRef } from 'vue-demi'
+import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted, toRef, onUnmounted } from 'vue-demi'
 import { useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
 import { h, useField, useFieldSchema, Fragment, ExpressionScope } from '@formily/vue'
 import type { Field } from '@formily/core'
@@ -79,14 +79,53 @@ const QueryListInner = defineComponent<QueryListProps>({
         toolbar: queryToolbar.value
       }
     }
+    const isLoadingMore = ref(false)
+    let currentBatchProcess: number | null = null
+
+    const batchSetTableData = (list: any[]) => {
+      if (currentBatchProcess) {
+        globalThis.cancelAnimationFrame(currentBatchProcess)
+      }
+
+      const BATCH_SIZE = 20
+      const totalData = [...list]
+      let currentIndex = 0
+      isLoadingMore.value = true
+
+      const processBatch = () => {
+        const batch = totalData.slice(currentIndex, currentIndex + BATCH_SIZE)
+        if (batch.length === 0) {
+          isLoadingMore.value = false
+          return
+        }
+
+        if (currentIndex === 0) {
+          queryTable.value?.setValue(batch)
+        } else {
+          const currentValue = queryTable.value?.value || []
+          queryTable.value?.setValue([...currentValue, ...batch])
+        }
+
+        currentIndex += BATCH_SIZE
+
+        if (currentIndex < totalData.length) {
+          currentBatchProcess = globalThis.requestAnimationFrame(processBatch)
+        } else {
+          isLoadingMore.value = false
+          currentBatchProcess = null
+        }
+      }
+
+      currentBatchProcess = globalThis.requestAnimationFrame(processBatch)
+    }
     const onSuccess = (data: IListPageResult | IListResult) => {
       if (!Array.isArray(data)) {
         const { list, currentPage, total } = data
-        queryTable.value?.setValue(list)
+        batchSetTableData([...list])
         paginationContext?.value?.changePage?.(currentPage)
         paginationContext?.value?.changeTotal?.(total)
       } else {
-        queryTable.value?.setValue(data)
+        batchSetTableData([...data])
       }
     }
     /* 分页处理 */
@@ -154,6 +193,12 @@ const QueryListInner = defineComponent<QueryListProps>({
       enabled.value = true
       await queryResult.refetch()
     })
+    onUnmounted(() => {
+      if (currentBatchProcess) {
+        globalThis.cancelAnimationFrame(currentBatchProcess)
+      }
+    })
+    provide('isLoadingMore', isLoadingMore)
     return () => {
       return h(
         ExpressionScope,
