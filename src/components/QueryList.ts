@@ -82,11 +82,19 @@ const QueryListInner = defineComponent<QueryListProps>({
     const isLoadingMore = ref(false)
     let currentBatchProcess: number | null = null
 
-    const batchSetTableData = (list: any[]) => {
+    const renderTableData = (list: any[]) => {
       if (currentBatchProcess) {
         globalThis.cancelAnimationFrame(currentBatchProcess)
       }
 
+      // 如果数据量小于等于 50，直接渲染
+      if (list.length <= 50) {
+        queryTable.value?.setValue([...list])
+        isLoadingMore.value = false
+        return
+      }
+
+      // 数据量大于 50 时，使用分批渲染
       const BATCH_SIZE = 10
       const totalData = [...list]
       let currentIndex = 0
@@ -121,11 +129,11 @@ const QueryListInner = defineComponent<QueryListProps>({
     const onSuccess = (data: IListPageResult | IListResult) => {
       if (!Array.isArray(data)) {
         const { list, currentPage, total } = data
-        batchSetTableData([...list])
+        renderTableData([...list])
         paginationContext?.value?.changePage?.(currentPage)
         paginationContext?.value?.changeTotal?.(total)
       } else {
-        batchSetTableData([...data])
+        renderTableData([...data])
       }
     }
     /* 分页处理 */
