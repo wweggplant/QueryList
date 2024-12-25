@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3-alpha.4](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.3...v0.0.3-alpha.4) (2024-12-25)
+
+
+### Features
+
+* **QueryList:** implement batch data loading and cleanup on unmount ([4b3d974](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/4b3d974f0d7feba00dad00ed8adc20382f8e05d9))
+
 ### [0.0.3-alpha.3](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.2...v0.0.3-alpha.3) (2024-05-10)
 
 ### [0.0.3-alpha.2](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.1...v0.0.3-alpha.2) (2023-12-27)
