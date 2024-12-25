@@ -2,7 +2,10 @@ const { faker } = require('@faker-js/faker');
 const mockMap = {
   'GET /api/getQueryListData': (req, res) => {
     const { page } = req.query;
-    const size  = req.query.size ?? 10;
+    const size = req.query.size ?? 100;
+    const TOTAL_PAGES = 5;
+    const TOTAL_ITEMS = TOTAL_PAGES * size;
+
     const list = Array.from({ length: size }).map(() => ({
       id: faker.datatype.uuid(),
       username: faker.internet.userName(),
@@ -12,11 +15,12 @@ const mockMap = {
       mobile: faker.phone.number(),
       department_name: faker.commerce.department(),
     }));
+
     setTimeout(() => {
       res.json({
         data: {
           current: +page,
-          total: 18,  // You can adjust this based on the number of total mock data you want to have
+          total: TOTAL_ITEMS,
           list
         }
       });
@@ -24,7 +28,7 @@ const mockMap = {
   },
   'DELETE /api/user/:id': (req, res) => {
     console.log('---->', req.body);
-    console.log('---->', req.params.id); // request params
+    console.log('---->', req.params.id);
     res.send({ status: 'ok', message: 'delete success!' });
   },
 };
