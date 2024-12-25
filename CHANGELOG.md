@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3-alpha.8](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.6...v0.0.3-alpha.8) (2024-12-25)
+
+
+### Bug Fixes
+
+* **mock:** update mock data size and total items calculation ([9ce3a3c](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/9ce3a3ca1b0ee5ee18081103dca8076e985549c9))
+
 ### [0.0.3-alpha.7](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.6...v0.0.3-alpha.7) (2024-12-25)
 
 
