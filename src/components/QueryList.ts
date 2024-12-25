@@ -87,7 +87,7 @@ const QueryListInner = defineComponent<QueryListProps>({
         globalThis.cancelAnimationFrame(currentBatchProcess)
       }
 
-      const BATCH_SIZE = 20
+      const BATCH_SIZE = 10
       const totalData = [...list]
       let currentIndex = 0
       isLoadingMore.value = true
