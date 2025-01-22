@@ -1,20 +1,20 @@
 {
-  "name": "@he-fe/query-list",
+  "name": "@wweggplant/query-list",
   "version": "0.0.3-alpha.8",
   "description": "queryList",
   "main": "dist/query-list.umd.js",
   "module": "dist/query-list.esm.js",
   "repository": {
     "type": "git",
-    "url": "https://sc.happyelements.net/info-center/frontend/he-fe/querylist.git"
+    "url": "https://github.com/wweggplant/QueryList.git"
   },
   "bugs": {
-    "url": "https://sc.happyelements.net/info-center/frontend/he-fe/querylist/-/issues"
+    "url": "https://github.com/wweggplant/QueryList/issues"
   },
   "publishConfig": {
-    "registry": "http://10.130.130.169:4873/"
+    "registry": "https://registry.npmjs.org/"
   },
-  "homepage": "https://sc.happyelements.net/info-center/frontend/he-fe/querylist",
+  "homepage": "https://github.com/wweggplant/QueryList#readme",
   "scripts": {
     "serve": "vue-cli-service serve",
     "dev": "rollup -w --environment NODE_ENV:development -c scripts/rollup.config.dev.js",
@@ -36,7 +36,7 @@
     "release:alpha": "npm run release -- --prerelease alpha"
   },
   "author": "wei279.wang",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "peerDependencies": {
     "@formily/core": "^2.2.2",
     "@formily/element": "^2.2.2",
