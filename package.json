@@ -35,7 +35,8 @@
     "release": "standard-version",
     "release:alpha": "npm run release -- --prerelease alpha"
   },
-  "author": "wei279.wang",
+  "author": "wweggplant",
+  "email": "weiainijiujiu@126.com",
   "license": "Apache-2.0",
   "peerDependencies": {
     "@formily/core": "^2.2.2",
