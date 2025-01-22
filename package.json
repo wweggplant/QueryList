@@ -40,11 +40,11 @@
   "peerDependencies": {
     "@formily/core": "^2.2.2",
     "@formily/element": "^2.2.2",
-    "@formily/shared": "^2.2.2",
     "@formily/json-schema": "^2.2.2",
-    "@formily/vue": "^2.2.2",
-    "@formily/reactive-vue": "^2.2.2",
     "@formily/reactive": "^2.2.2",
+    "@formily/reactive-vue": "^2.2.2",
+    "@formily/shared": "^2.2.2",
+    "@formily/vue": "^2.2.2",
     "@tanstack/vue-query": "^4.26.1",
     "@vue/composition-api": "^1.7.1",
     "element-ui": "^2.15.13",
@@ -90,7 +90,7 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-typescript": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
+    "@vue/cli-service": "~5.0.8",
     "@vue/composition-api": "^1.7.1",
     "babel-eslint": "^10.1.0",
     "commitizen": "^4.2.3",
@@ -128,6 +128,9 @@
     "vue": "~2.6.0",
     "vue-cli-plugin-mock": "^1.0.3",
     "vue-router": "^3.5.1",
-    "vue-template-compiler": "2.6.14"
+    "vue-template-compiler": "2.6.14",
+    "webpack": "^5.54.0",
+    "webpack-dev-server": "^4.7.4",
+    "babel-loader": "^8.2.2"
   }
 }
