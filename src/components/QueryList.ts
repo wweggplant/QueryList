@@ -1,9 +1,10 @@
-import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted, toRef, onUnmounted } from 'vue-demi'
+import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted, toRef } from 'vue-demi'
 import { useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
 import { h, useField, useFieldSchema, Fragment, ExpressionScope } from '@formily/vue'
 import type { Field } from '@formily/core'
 import { Space, Submit, Reset, FormButtonGroup, type SpaceProps } from '@formily/element'
 import Table, { PaginationSymbol, type PaginationAction } from './Table'
+import ReadPrettyTable from './ReadPrettyTable'
 import { QueryBaseSymbol, SelectedRecordsSymbol, UniqueQueryKey, stylePrefix } from '../shared/const'
 import { composeExport, DefaultQueryButton } from '../shared/utils'
 import './style.scss'
@@ -80,13 +81,15 @@ const QueryListInner = defineComponent<QueryListProps>({
       }
     }
     const isLoadingMore = ref(false)
-    let currentBatchProcess: number | null = null
+    // let currentBatchProcess: number | null = null
 
     const renderTableData = (list: any[]) => {
-      if (currentBatchProcess) {
-        globalThis.cancelAnimationFrame(currentBatchProcess)
-      }
-
+      // if (currentBatchProcess) {
+      //   globalThis.cancelAnimationFrame(currentBatchProcess)
+      // }
+      queryTable.value?.setValue([...list])
+      isLoadingMore.value = false
+      /*
       // 如果数据量小于等于 50，直接渲染
       if (list.length <= 50) {
         queryTable.value?.setValue([...list])
@@ -94,7 +97,7 @@ const QueryListInner = defineComponent<QueryListProps>({
         return
       }
 
-      // 数据量大于 50 时，使用分批渲染
+       // 数据量大于 50 时，使用分批渲染
       const BATCH_SIZE = 10
       const totalData = [...list]
       let currentIndex = 0
@@ -124,7 +127,7 @@ const QueryListInner = defineComponent<QueryListProps>({
         }
       }
 
-      currentBatchProcess = globalThis.requestAnimationFrame(processBatch)
+      currentBatchProcess = globalThis.requestAnimationFrame(processBatch) */
     }
     const onSuccess = (data: IListPageResult | IListResult) => {
       if (!Array.isArray(data)) {
@@ -201,11 +204,11 @@ const QueryListInner = defineComponent<QueryListProps>({
       enabled.value = true
       await queryResult.refetch()
     })
-    onUnmounted(() => {
+    /*     onUnmounted(() => {
       if (currentBatchProcess) {
         globalThis.cancelAnimationFrame(currentBatchProcess)
       }
-    })
+    }) */
     provide('isLoadingMore', isLoadingMore)
     return () => {
       return h(
@@ -379,6 +382,7 @@ export const QueryList = composeExport(QueryListInner, {
   Toolbar,
   Form,
   Table,
+  ReadPrettyTable,
   QueryActionBtn,
   FormButtons,
   useQueryList

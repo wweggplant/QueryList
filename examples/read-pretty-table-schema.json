@@ -1,0 +1,144 @@
+{
+  "type": "object",
+  "properties": {
+    "QueryList": {
+      "type": "void",
+      "x-component": "QueryList",
+      "x-component-props": {
+        "queryOptions": {
+          "a": 123
+        },
+        "pagination": {
+          "pageSize": 10
+        },
+        "queryFn": "{{queryFn}}"
+      },
+      "properties": {
+        "QueryForm": {
+          "type": "object",
+          "x-component": "QueryList.Form",
+          "properties": {
+            "layout": {
+              "type": "void",
+              "x-component": "FormGrid",
+              "x-component-props": {
+                "minColumns": 2,
+                "maxColumns": 3,
+                "strictAutoFit": true,
+                "columnGap": 20
+              },
+              "properties": {
+                "type": {
+                  "title": "合同类型",
+                  "x-decorator": "FormItem",
+                  "x-component": "Select",
+                  "type": "string",
+                  "x-validator": [],
+                  "x-decorator-props": {},
+                  "required": true,
+                  "enum": [{
+                    "label": "类型1",
+                    "value": 1
+                  },{
+                    "label": "类型2",
+                    "value": 2
+                  }],
+                  "name": "contract_type"
+                },
+                "name": {
+                  "title": "合同名称",
+                  "x-decorator": "FormItem",
+                  "x-component": "Input",
+                  "type": "string",
+                  "x-validator": [],
+                  "x-decorator-props": {},
+                  "name": "contract_type"
+                }
+              }
+            }
+          }
+        },
+        "QueryTable": {
+          "type": "array",
+          "x-component": "QueryList.ReadPrettyTable",
+          "properties": {
+            "column1": {
+              "type": "void",
+              "x-component": "QueryList.ReadPrettyTable.Column",
+              "x-component-props": {
+                "title": "姓名",
+                "sortable": true,
+                "prop": "cname",
+                "show-overflow-tooltip": true
+              },
+              "properties": {
+                "warp": {
+                  "type": "void",
+                  "x-component": "span",
+                  "x-component-props": {
+                    "style": "background-color: red;"
+                  },
+                  "properties": {
+                    "cname": {
+                      "type": "void",
+                      "x-component": "span",
+                      "x-component-props": {
+                        "style": "color: white;"
+                      },
+                      "x-content": "{{$record.cname}}"
+                    },
+                    "cname2": {
+                      "type": "void",
+                      "x-component": "span",
+                      "x-component-props": {
+                        "style": "color: white;"
+                      },
+                      "x-content": "{{$record.cname}}"
+                    }
+                    
+                  }
+        
+                }
+              }
+            },
+            "column2": {
+              "type": "void",
+              "x-component": "QueryList.ReadPrettyTable.Column",
+              "x-component-props": {
+                "title": "用户名",
+                "prop": "username"
+              }
+            },
+            "column3": {
+              "type": "void",
+              "x-component": "QueryList.ReadPrettyTable.Column",
+              "x-component-props": {
+                "title": "邮箱",
+                "prop": "email",
+                "show-overflow-tooltip": true,
+                "width": 100
+              }
+            },
+            "column4": {
+              "type": "void",
+              "x-component": "QueryList.ReadPrettyTable.Column",
+              "x-component-props": {
+                "title": "手机号",
+                "prop": "mobile"
+              }
+            },
+            "column": {
+              "type": "void",
+              "x-component": "QueryList.ReadPrettyTable.Column",
+              "x-component-props": {
+                "title": "部门名称",
+                "prop": "department_name",
+                "sortable": true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+} 

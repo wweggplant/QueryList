@@ -16,7 +16,7 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "baseUrl": ".",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
     "paths": {
       "@": ["src"]
     },

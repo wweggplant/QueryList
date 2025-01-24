@@ -226,7 +226,7 @@ const renderAddition = () => {
     return addition
   }, null)
 }
-const usePagination = () => {
+export const usePagination = () => {
   return inject<Ref<PaginationAction>>(PaginationSymbol, ref({ totalPage: 1 }))
 }
 

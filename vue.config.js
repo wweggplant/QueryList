@@ -15,12 +15,6 @@ module.exports = defineConfig({
   },
   transpileDependencies: true,
   devServer: {
-    client: {
-      overlay: {
-        warnings: false,
-        errors: false
-      }
-    }
   },
   pluginOptions: {
     mock: { entry: './examples/mock/index.js', debug: true }
