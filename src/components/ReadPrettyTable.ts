@@ -29,12 +29,17 @@ type ColumnProps = Record<string, any> & {
 }
 
 const getArrayTableColumns = (sources: any[]): ColumnProps[] => {
-  console.log('sources', sources)
   return sources.map(({ name, columnProps, schema }, key) => {
     if (!isColumnComponent(schema)) return null
     const { title } = columnProps || {}
-
+    // 渲染表格列的内容
+    // @param startIndex - 分页起始索引
+    // @returns 返回一个渲染函数,用于渲染每个单元格的内容
     const render = (startIndex?: Ref<number>) => {
+      // 返回单元格渲染函数
+      // @param props.row - 当前行数据
+      // @param props.column - 当前列配置
+      // @param props.$index - 当前行索引
       return (props: {
         row: Record<string, any>
         column: ElColumnProps
@@ -47,10 +52,10 @@ const getArrayTableColumns = (sources: any[]): ColumnProps[] => {
         })
         // 1. 检查是否有子属性需要渲染
         const properties = schema.properties
-        // 添加"x-content"
+
+        // 如果没有子属性配置,则直接渲染单元格数据
         if (!properties) {
-          // console.log('!properties', props.row, columnProps?.prop, name)
-          // 如果没有子属性，直接渲染数据
+          // 从行数据中获取对应的属性值进行渲染
           return h(
             'span',
             {
@@ -58,23 +63,28 @@ const getArrayTableColumns = (sources: any[]): ColumnProps[] => {
             { default: () => props.row[columnProps?.prop || name] }
           )
         }
-        // 创建一个新的 scope 对象，包含当前行数据
+
+        // 创建作用域对象,包含当前行数据和索引
+        // 用于在递归组件中访问上下文数据
         const scope = {
-          $record: props.row,
-          $index: props.$index
+          $record: props.row, // 当前行数据
+          $index: props.$index // 当前行索引
         }
+
         console.log('Creating RecursionComponent with:', {
           properties,
           scope
         })
+
+        // 使用递归组件渲染复杂的单元格内容
         return h(
           RecursionComponent,
           {
             props: {
-              schema,
+              schema, // 列的schema配置
               name: props.$index,
-              scope, // 传入 scope 对象
-              onlyRenderProperties: true,
+              scope, // 传入作用域对象供子组件使用
+              onlyRenderProperties: true, // 只渲染properties部分
               components: {
               }
             }
@@ -88,8 +98,10 @@ const getArrayTableColumns = (sources: any[]): ColumnProps[] => {
       key,
       label: title || name,
       prop: columnProps?.prop || name, // 使用 x-component-props 中的 prop
-      ...columnProps,
-      render
+      ...columnProps
+    }
+    if (schema.properties) {
+      column.render = render
     }
     return column
   }).filter((col): col is ColumnProps => col !== null)
@@ -200,7 +212,8 @@ const ReadPrettyTableInner = observer(
       })
 
       const renderColumns = () => {
-        return columns.map(({ key, render, asterisk, ...props }) => {
+        console.log('renderColumns', columns)
+        return columns.map(({ key, render, asterisk, properties, ...props }) => {
           const children = {} as any
           if (render != null) {
             children.default = render()

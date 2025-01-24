@@ -62,6 +62,15 @@
           "type": "array",
           "x-component": "QueryList.ReadPrettyTable",
           "properties": {
+            "selection": {
+              "type": "void",
+              "x-component": "QueryList.ReadPrettyTable.Column",
+              "x-component-props": {
+                "type": "selection",
+                "width": 50,
+                "align": "center"
+              }
+            },
             "column1": {
               "type": "void",
               "x-component": "QueryList.ReadPrettyTable.Column",
@@ -127,13 +136,32 @@
                 "prop": "mobile"
               }
             },
-            "column": {
+            "column5": {
               "type": "void",
               "x-component": "QueryList.ReadPrettyTable.Column",
               "x-component-props": {
                 "title": "部门名称",
                 "prop": "department_name",
                 "sortable": true
+              }
+            },
+            "column-operation": {
+              "type": "void",
+              "x-component": "QueryList.ReadPrettyTable.Column",
+              "x-component-props": {
+                "title": "操作",
+                "width": 100
+              },
+              "properties": {
+                "operation": {
+                  "type": "void",
+                  "x-component": "el-button",
+                  "x-component-props": {
+                    "type": "primary",
+                    "size": "small"
+                  },
+                  "x-content": "编辑"
+                }
               }
             }
           }
