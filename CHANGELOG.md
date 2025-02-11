@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 0.0.3 (2025-02-11)
+
+
+### Features
+
+* 💻 更新代码 ([8833ef8](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/8833ef8534b189355c53c79569cde5dd67ffa5ff))
+* 💻 添加分页的支持 ([7f27650](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/7f276504d0d137e0891be8f63aee7d49d6bc822f))
+* enhance table functionality and add new components ([4778f8c](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/4778f8c836129510d6c9b66c5c1aa27b56aa2d25))
+* **QueryList:** implement batch data loading and cleanup on unmount ([4b3d974](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/4b3d974f0d7feba00dad00ed8adc20382f8e05d9))
+* **ReadPrettyTable:** add new selection and operation columns to schema ([7e809d1](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/7e809d16ee4682c713fa4ac8f4c54926a03d670c))
+* Table组件添加勾选项的控制逻辑 ([739e4e1](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/739e4e17dd3a4c179336443b736f9cedcf0c82e4))
+* 优化mock数据 ([15436b1](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/15436b1b356d8b36dfb7a9db7e0740c38064aa30))
+
+
+### Bug Fixes
+
+* **mock:** update mock data size and total items calculation ([9ce3a3c](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/9ce3a3ca1b0ee5ee18081103dca8076e985549c9))
+* 修复初始查询时机的问题 ([796e436](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/commit/796e4360acdac8381ea4e2a11ddc6ec3d272e33b))
+
 ### [0.0.3-alpha.8](https://sc.happyelements.net/info-center/frontend/he-fe/querylist/compare/v0.0.3-alpha.6...v0.0.3-alpha.8) (2024-12-25)
 
 
