@@ -3,13 +3,9 @@
 </template>
 
 <script lang="ts">
-import CompositionApi from '@vue/composition-api'
-import Vue from 'vue'
-Vue.use(CompositionApi)
-import { defineComponent } from 'vue-demi'
+import { defineComponent, h } from 'vue-demi'
 import { createQueryList } from '../src/index'
-import schema from './schema-select.json'
-
+import schema from './read-pretty-table-schema.json'
 const QueryListWrapper = createQueryList({
   queryFn: async ({ form, currentPagination, }) => { 
     console.log(currentPagination, 'currentPagination')
@@ -28,30 +24,22 @@ const QueryListWrapper = createQueryList({
     console.log('rowSelectedFunction', item)
     return item.sex === 1
   },
-  mounted(...args) {
-    console.log('mounted')
-    console.log(args)
-  },
-  handleSelectedRecordsUpdate(selectedRecords) {
-    console.log('handleSelectedRecordsUpdate')
-    console.log(selectedRecords)
-  },
-  batchDel(querist, ...args) {
+  batchDel: async (querist, ...args) => {
     const { API, selectedRecords } = querist
-    console.log('执行删除操作')
-    console.log(selectedRecords.value, 'selectedRecords')
-    console.log(args)
-    // 执行查询
-    API.query()
+    console.log(selectedRecords, querist, '执行删除操作')
+    alert(`执行删除操作, 删除的ids为:${selectedRecords.value.map((item: any) => item.id).join(',')}`)
   },
-  delRow(querist, obj, ...args) {
-    const { API } = querist
-    console.log('执行删除操作')
-    console.log(obj.record, '')
-    // 执行查询
-    API.query()
-  }
+  editRow(querist, obj, ...args) {
+    console.log(obj.record, '编辑')
+  },
+  cnameLabel: () => {
+    // @ts-ignore
+    return h('span', {
+      style: 'color: red;'
+    }, '123')
+  },
 })
+
 export default defineComponent({
   components: {
     QueryListWrapper
@@ -62,4 +50,4 @@ export default defineComponent({
     }
   }
 })
-</script>
+</script> 

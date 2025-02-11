@@ -14,7 +14,8 @@ const router = new Router({
   routes: [
     { path: '/', component: () => import('./index.vue') },
     { path: '/basic', component: () => import('./basic.vue') },
-    { path: '/set-select', component: () => import('./set-select.vue') }
+    { path: '/set-select', component: () => import('./set-select.vue') },
+    { path: '/read-pretty-table', component: () => import('./read-pretty-table.vue') }
   ]
 })
 

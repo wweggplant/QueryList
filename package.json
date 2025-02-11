@@ -1,6 +1,6 @@
 {
   "name": "@wweggplant/query-list",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "queryList",
   "main": "dist/query-list.umd.js",
   "module": "dist/query-list.esm.js",
@@ -28,12 +28,14 @@
     "test": "jest",
     "test:c": "jest --coverage",
     "pub:alpha": "npm run prepublish && npm run release:alpha && npm run pub",
+    "pub:patch": "npm run prepublish:patch && npm run release:patch && npm run pub",
     "prepublish": "npm run build",
     "prepublish:patch": "npm run patch & npm run build",
     "pub": "npm publish --access=public",
     "unpublish": "npm unpublish --access=public --force",
     "release": "standard-version",
-    "release:alpha": "npm run release -- --prerelease alpha"
+    "release:alpha": "npm run release -- --prerelease alpha",
+    "release:patch": "npm run release -- --release-as patch"
   },
   "author": "wweggplant",
   "email": "weiainijiujiu@126.com",
@@ -41,11 +43,11 @@
   "peerDependencies": {
     "@formily/core": "^2.2.2",
     "@formily/element": "^2.2.2",
-    "@formily/shared": "^2.2.2",
     "@formily/json-schema": "^2.2.2",
-    "@formily/vue": "^2.2.2",
-    "@formily/reactive-vue": "^2.2.2",
     "@formily/reactive": "^2.2.2",
+    "@formily/reactive-vue": "^2.2.2",
+    "@formily/shared": "^2.2.2",
+    "@formily/vue": "^2.2.2",
     "@tanstack/vue-query": "^4.26.1",
     "@vue/composition-api": "^1.7.1",
     "element-ui": "^2.15.13",
@@ -91,9 +93,10 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-typescript": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
+    "@vue/cli-service": "~5.0.8",
     "@vue/composition-api": "^1.7.1",
     "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.2",
     "commitizen": "^4.2.3",
     "consola": "^2.15.3",
     "core-js": "^2.4.0",
@@ -124,11 +127,14 @@
     "rollup-plugin-terser": "^7.0.2",
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
+    "standard-version": "^9.5.0",
     "ts-import-plugin": "^2.0.0",
     "typescript": "*",
     "vue": "~2.6.0",
     "vue-cli-plugin-mock": "^1.0.3",
     "vue-router": "^3.5.1",
-    "vue-template-compiler": "2.6.14"
+    "vue-template-compiler": "2.6.14",
+    "webpack": "^5.54.0",
+    "webpack-dev-server": "^4.7.4"
   }
 }
