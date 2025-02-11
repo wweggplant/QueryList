@@ -1,25 +1,25 @@
 import { observer } from '@formily/reactive-vue'
-import { computed, defineComponent, onUnmounted, ref, Ref, VNode } from 'vue-demi'
-import { Table as ElTable, TableColumn as ElTableColumn, Pagination } from 'element-ui'
+import { computed, defineComponent, onUnmounted, ref, Ref, VNode, watch, nextTick, onMounted } from 'vue-demi'
+import { Table as ElTable, TableColumn as ElTableColumn, Pagination, Loading } from 'element-ui'
 import { useField, useFieldSchema, h, Fragment } from '@formily/vue'
 import { Schema } from '@formily/json-schema'
 import { stylePrefix } from '../shared/const'
 import { isBool, uid } from '@formily/shared'
 import { autorun } from '@formily/reactive'
 import { ArrayField } from '@formily/core'
-import { useQueryContext, useQueryList } from './QueryList'
+import { ActionHOC, useQueryContext, useQueryList, useSelectedRecords } from './QueryList'
 import {
   type TableColumn as ElColumnProps
 } from 'element-ui'
-import { composeExport } from '../shared/utils'
-import RecursionComponent from './RecursionComponent'
+import { composeExport, DefaultQueryButton } from '../shared/utils'
+import RecursionComponent, { useReactiveRecord } from './RecursionComponent'
 import { Space } from '@formily/element'
 import { usePagination } from './Table'
+import { ElLoadingComponent } from 'element-ui/types/loading'
 
 const isColumnComponent = (schema: Schema) => {
   return schema['x-component']?.indexOf('Column') > -1
 }
-
 type ColumnProps = Record<string, any> & {
   key: string | number
   label: string
@@ -45,11 +45,6 @@ const getArrayTableColumns = (sources: any[]): ColumnProps[] => {
         column: ElColumnProps
         $index: number
       }): VNode | null => {
-        console.log('ReadPrettyTable render:', {
-          row: props.row,
-          columnProps,
-          schema
-        })
         // 1. 检查是否有子属性需要渲染
         const properties = schema.properties
 
@@ -71,21 +66,16 @@ const getArrayTableColumns = (sources: any[]): ColumnProps[] => {
           $index: props.$index // 当前行索引
         }
 
-        console.log('Creating RecursionComponent with:', {
-          properties,
-          scope
-        })
-
         // 使用递归组件渲染复杂的单元格内容
         return h(
           RecursionComponent,
           {
             props: {
               schema, // 列的schema配置
-              name: props.$index,
               scope, // 传入作用域对象供子组件使用
               onlyRenderProperties: true, // 只渲染properties部分
               components: {
+                ActionBtn
               }
             }
           },
@@ -120,7 +110,6 @@ const ReadPrettyTablePagination = defineComponent({
     const totalPage = computed(() => pagination.value.totalPage)
 
     const renderPagination = () => {
-      console.log('renderPagination', pagination.value)
       return h(
         'div',
         {
@@ -182,6 +171,12 @@ const ReadPrettyTableInner = observer(
   defineComponent({
     name: 'ReadPrettyTable',
     inheritAttrs: false,
+    props: {
+      rowSelectedFunction: {
+        type: Function,
+        default: null
+      }
+    },
     setup (props, { attrs, listeners, slots, refs }) {
       const { setTableFieldRef } = useQueryContext()
       const fieldRef = useField<ArrayField>()
@@ -190,6 +185,30 @@ const ReadPrettyTableInner = observer(
       const schema = useFieldSchema()
       const prefixCls = `${stylePrefix}-array-table`
       const tableClassName = 'read-pretty-table-' + uid()
+      const rootQueryList = useQueryList()
+
+      // -------------------------------
+      // 新增：添加 loading 功能
+      let loading: ElLoadingComponent | null = null
+      // 假设 queryList.queryResult 中存在 isFetching
+      const isFetching = queryList?.queryResult?.isFetching
+      const watchStopHandle = isFetching
+        ? watch(() => isFetching.value, () => {
+          if (isFetching.value) {
+            if (loading) {
+              return
+            }
+            loading = Loading.service({
+              target: `.${tableClassName}`
+            })
+          } else {
+            loading?.close()
+            loading = null
+          }
+        })
+        : null
+      // -------------------------------
+
       const dataSource: Ref<any[]> = ref([])
 
       // 简化列定义，直接从 schema 获取
@@ -202,17 +221,41 @@ const ReadPrettyTableInner = observer(
         }))
       )
 
-      // 更新数据源
+      const tableRef = ref<ElTable | null>(null) // 新增表格引用
+      // 新增：行选择状态同步逻辑
+      function syncRowSelectionState () {
+        const field = fieldRef.value
+        const dataSource = Array.isArray(field.value) ? field.value.slice() : []
+        console.log('syncRowSelectionState', tableRef.value, dataSource)
+        if (props?.rowSelectedFunction) {
+          dataSource.forEach((item, i) => {
+            tableRef.value?.toggleRowSelection(item, props.rowSelectedFunction(item, i))
+          })
+        }
+      }
+
       const dispose = autorun(() => {
         dataSource.value = Array.isArray(fieldRef.value.value) ? fieldRef.value.value : []
+        nextTick(() => {
+          syncRowSelectionState() // 数据变化后同步选择状态
+        })
       })
-
+      onMounted(() => {
+        if (refs.tableRef) {
+          tableRef.value = refs.tableRef as ElTable
+        }
+        if (refs.QueryTablePagination) {
+          tableRef.value = (refs.QueryTablePagination as ElTable)?.$children?.[0] as ElTable ?? null
+        }
+        tableRef.value && rootQueryList?.API.setTableRef(tableRef.value)
+      })
       onUnmounted(() => {
         dispose()
+        watchStopHandle?.()
       })
+      const { update: updateSelectedRecords } = useSelectedRecords() ?? {}
 
       const renderColumns = () => {
-        console.log('renderColumns', columns)
         return columns.map(({ key, render, asterisk, properties, ...props }) => {
           const children = {} as any
           if (render != null) {
@@ -234,13 +277,13 @@ const ReadPrettyTableInner = observer(
         dataSource?: any[],
         pager?: () => VNode
       ) => {
-        console.log('renderTable:', { dataSource, pager })
         return h(
           'div',
           { class: `${prefixCls} ${tableClassName}` },
           {
             default: () => [
               h(ElTable, {
+                ref: 'tableRef',
                 props: {
                   ...attrs,
                   data: dataSource
@@ -248,8 +291,8 @@ const ReadPrettyTableInner = observer(
                 on: {
                   ...listeners,
                   'selection-change' (list) {
-                    // updateSelectedRecords(list)
-                    // listeners?.['selection-change']?.(list)
+                    updateSelectedRecords(list)
+                    listeners?.['selection-change']?.(list)
                   }
                 }
               }, {
@@ -264,7 +307,6 @@ const ReadPrettyTableInner = observer(
 
       return () => {
         const pagination = queryList?.rootProps?.pagination
-        console.log('pagination', pagination)
         if (!pagination) {
           return renderTable(dataSource.value)
         }
@@ -273,6 +315,7 @@ const ReadPrettyTableInner = observer(
         return h(
           ReadPrettyTablePagination,
           {
+            ref: 'QueryTablePagination',
             attrs: {
               ...(isBool(pagination) ? {} : pagination)
             }
@@ -285,10 +328,14 @@ const ReadPrettyTableInner = observer(
     }
   })
 )
-
+const ActionBtn = ActionHOC(DefaultQueryButton, () => {
+  const record = useReactiveRecord()
+  return record
+})
 // 导出组件
 export const ReadPrettyTable = composeExport(ReadPrettyTableInner, {
   Column: ElTableColumn,
+  ActionBtn,
   usePagination
 })
 

@@ -58,9 +58,31 @@
             }
           }
         },
+        "Toolbar": {
+          "type": "object",
+          "x-component": "QueryList.Toolbar",
+          "properties": {
+            "a": {
+              "x-component": "QueryList.QueryActionBtn",
+              "x-content": "批量删除",
+              "type": "void",
+              "x-component-props": {
+                "@click": "{{batchDel}}"
+              }
+            },
+            "b": {
+              "x-component": "Button",
+              "x-content": "操作b",
+              "type": "void"
+            }
+          }
+        },
         "QueryTable": {
           "type": "array",
           "x-component": "QueryList.ReadPrettyTable",
+          "x-component-props": {
+            "rowSelectedFunction": "{{rowSelectedFunction}}"
+          },
           "properties": {
             "selection": {
               "type": "void",
@@ -150,17 +172,27 @@
               "x-component": "QueryList.ReadPrettyTable.Column",
               "x-component-props": {
                 "title": "操作",
-                "width": 100
+                "width": 100,
+                "fixed": "right"
               },
               "properties": {
                 "operation": {
                   "type": "void",
-                  "x-component": "el-button",
+                  "x-component": "ActionBtn",
                   "x-component-props": {
-                    "type": "primary",
-                    "size": "small"
+                    "type": "text",
+                    "@click": "{{editRow}}"
                   },
                   "x-content": "编辑"
+                },
+                "operation2": {
+                  "type": "void",
+                  "x-component": "ActionBtn",
+                  "x-component-props": {
+                    "type": "text",
+                    "@click": "{{editRow}}"
+                  },
+                  "x-content": "{{'delete'}}"
                 }
               }
             }

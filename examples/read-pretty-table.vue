@@ -20,6 +20,18 @@ const QueryListWrapper = createQueryList({
       total,
     }
   },
+  rowSelectedFunction(item) {
+    console.log('rowSelectedFunction', item)
+    return item.sex === 1
+  },
+  batchDel: async (querist, ...args) => {
+    const { API, selectedRecords } = querist
+    console.log(selectedRecords, querist, '执行删除操作')
+    alert(`执行删除操作, 删除的ids为:${selectedRecords.value.map((item: any) => item.id).join(',')}`)
+  },
+  editRow(querist, obj, ...args) {
+    console.log(obj.record, '编辑')
+  },
   cnameLabel: () => {
     // @ts-ignore
     return h('span', {

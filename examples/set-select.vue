@@ -8,7 +8,7 @@ import Vue from 'vue'
 Vue.use(CompositionApi)
 import { defineComponent } from 'vue-demi'
 import { createQueryList } from '../src/index'
-import schema from './schema2.json'
+import schema from './schema-select.json'
 
 const QueryListWrapper = createQueryList({
   queryFn: async ({ form, currentPagination, }) => { 

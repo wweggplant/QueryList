@@ -1,6 +1,6 @@
-import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted, toRef } from 'vue-demi'
+import { defineComponent, provide, inject, ref, computed, readonly, shallowReactive, Ref, ComputedRef, onMounted, toRef, InjectionKey } from 'vue-demi'
 import { useQuery, UseQueryOptions, QueryFunctionContext } from '@tanstack/vue-query'
-import { h, useField, useFieldSchema, Fragment, ExpressionScope } from '@formily/vue'
+import { h, useField, useFieldSchema, Fragment, ExpressionScope, SchemaExpressionScopeSymbol } from '@formily/vue'
 import type { Field } from '@formily/core'
 import { Space, Submit, Reset, FormButtonGroup, type SpaceProps } from '@formily/element'
 import Table, { PaginationSymbol, type PaginationAction } from './Table'
@@ -57,6 +57,7 @@ export const useSelectedRecords = <T>() => {
 }
 interface IListPageResult { list: Array<{ list: unknown[] }>, currentPage: number, total: number }
 type IListResult = unknown[]
+export const _SchemaExpressionScopeSymbol: InjectionKey<Ref<Record<string, any>>> = Symbol('_schemaExpression')
 const QueryListInner = defineComponent<QueryListProps>({
   name: 'QueryList',
   props: ['queryOptions', 'queryFn', 'pagination'],
@@ -210,10 +211,12 @@ const QueryListInner = defineComponent<QueryListProps>({
       }
     }) */
     provide('isLoadingMore', isLoadingMore)
+    const expressionScope = inject(SchemaExpressionScopeSymbol)
+    provide(_SchemaExpressionScopeSymbol, expressionScope)
     return () => {
       return h(
         ExpressionScope,
-        { props: { value: { $query: API.query, $getQueryContext: getQueryContext, selectedList: selectedRecords, $pagination: paginationContext } } },
+        { props: { value: { $query: API.query, $getQueryContext: getQueryContext, selectedList: selectedRecords, $pagination: paginationContext } }, ...expressionScope },
         {
           default: () => h(Fragment, {}, slots)
         }
